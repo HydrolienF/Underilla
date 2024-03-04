@@ -1,14 +1,7 @@
 package com.jkantrell.mc.underilla.core.reader;
 
 import java.io.File;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import com.jkantrell.mc.underilla.core.api.Biome;
 import com.jkantrell.mc.underilla.core.api.Block;
 import com.jkantrell.mca.Chunk;
@@ -23,8 +16,8 @@ public abstract class WorldReader implements Reader {
     // FIELDS
     private final File world_;
     private final File regions_;
-    private final RLUCache<MCAFile> regionCache_;
-    private final RLUCache<ChunkReader> chunkCache_;
+    // private final RLUCache<MCAFile> regionCache_;
+    // private final RLUCache<ChunkReader> chunkCache_;
 
 
     // CONSTRUCTORS
@@ -41,8 +34,8 @@ public abstract class WorldReader implements Reader {
         }
         this.world_ = worldDir;
         this.regions_ = regionDir;
-        this.regionCache_ = new RLUCache<>(cacheSize);
-        this.chunkCache_ = new RLUCache<>(cacheSize * 8);
+        // this.regionCache_ = new RLUCache<>(cacheSize);
+        // this.chunkCache_ = new RLUCache<>(cacheSize * 8);
     }
 
 
@@ -62,10 +55,10 @@ public abstract class WorldReader implements Reader {
         return this.readChunk(chunkX, chunkZ).flatMap(c -> c.biomeAt(Math.floorMod(x, 16), y, Math.floorMod(z, 16)));
     }
     public Optional<ChunkReader> readChunk(int x, int z) {
-        ChunkReader chunkReader = this.chunkCache_.get(x, z);
-        if (chunkReader != null) {
-            return Optional.of(chunkReader);
-        }
+        // ChunkReader chunkReader = this.chunkCache_.get(x, z);
+        // if (chunkReader != null) {
+        // return Optional.of(chunkReader);
+        // }
         MCAFile r = this.readRegion(x >> 5, z >> 5);
         if (r == null) {
             return Optional.empty();
@@ -74,9 +67,10 @@ public abstract class WorldReader implements Reader {
         if (chunk == null) {
             return Optional.empty();
         }
-        chunkReader = this.newChunkReader(chunk);
-        this.chunkCache_.put(x, z, chunkReader);
-        return Optional.of(chunkReader);
+        // ChunkReader chunkReader = this.newChunkReader(chunk);
+        // this.chunkCache_.put(x, z, chunkReader);
+        // return Optional.of(chunkReader);
+        return Optional.of(this.newChunkReader(chunk));
     }
 
 
@@ -86,18 +80,19 @@ public abstract class WorldReader implements Reader {
 
     // PRIVATE UTIL
     private MCAFile readRegion(int x, int z) {
-        MCAFile region = this.regionCache_.get(x, z);
-        if (region != null) {
-            return region;
-        }
+        // MCAFile region = null; // this.regionCache_.get(x, z);
+        // if (region != null) {
+        // return region;
+        // }
         File regionFile = new File(this.regions_, "r." + x + "." + z + ".mca");
         if (!regionFile.exists()) {
             return null;
         }
         try {
-            region = MCAUtil.read(regionFile);
-            this.regionCache_.put(x, z, region);
-            return region;
+            // MCAFile region = MCAUtil.read(regionFile);
+            // this.regionCache_.put(x, z, region);
+            // return region;
+            return MCAUtil.read(regionFile);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -106,50 +101,50 @@ public abstract class WorldReader implements Reader {
 
 
     // CLASSES
-    private static class RLUCache<T> {
+    // private static class RLUCache<T> {
 
-        // FIELDS
-        private final Map<Pair<Integer, Integer>, T> map_ = new HashMap<>();
-        private final Deque<Pair<Integer, Integer>> queue_ = new LinkedList<>();
-        private final int capacity_;
-        private static int cptId = 0;
-        private final int id;
-
-
-        // CONSTRUCTOR
-        RLUCache(int capacity) {
-            this.capacity_ = capacity;
-            this.id = cptId++;
-        }
+    // // FIELDS
+    // private final Map<Pair<Integer, Integer>, T> map_ = new HashMap<>();
+    // private final Deque<Pair<Integer, Integer>> queue_ = new LinkedList<>();
+    // private final int capacity_;
+    // private static int cptId = 0;
+    // private final int id;
 
 
-        // UTIL
-        T get(int x, int z) {
-            Pair<Integer, Integer> pair = ImmutablePair.of(x, z);
-            T cached = this.map_.get(pair);
-            if (cached == null) {
-                return null;
-            }
-            this.queue_.remove(pair);
-            this.queue_.addFirst(pair);
-            return cached;
-        }
-        void put(int x, int z, T file) {
-            Pair<Integer, Integer> pair = ImmutablePair.of(x, z);
-            if (map_.containsKey(pair)) {
-                this.queue_.remove(pair);
-            } else if (this.queue_.size() >= this.capacity_) {
-                try {
-                    Pair<Integer, Integer> temp = this.queue_.removeLast();
-                    this.map_.remove(temp);
-                } catch (NoSuchElementException ignored) {
-                    // System.out.println(
-                    // "Failed to remove last element from RLUCache: " + map_.size() + " " + queue_.size() + " over " + capacity_);
-                }
-            }
-            this.map_.put(pair, file);
-            this.queue_.addFirst(pair);
-            // System.out.println("RLUCache " + id + ": " + this.map_.size() + " " + this.queue_.size() + " over " + this.capacity_);
-        }
-    }
+    // // CONSTRUCTOR
+    // RLUCache(int capacity) {
+    // this.capacity_ = capacity;
+    // this.id = cptId++;
+    // }
+
+
+    // // UTIL
+    // T get(int x, int z) {
+    // Pair<Integer, Integer> pair = ImmutablePair.of(x, z);
+    // T cached = this.map_.get(pair);
+    // if (cached == null) {
+    // return null;
+    // }
+    // this.queue_.remove(pair);
+    // this.queue_.addFirst(pair);
+    // return cached;
+    // }
+    // void put(int x, int z, T file) {
+    // Pair<Integer, Integer> pair = ImmutablePair.of(x, z);
+    // if (map_.containsKey(pair)) {
+    // this.queue_.remove(pair);
+    // } else if (this.queue_.size() >= this.capacity_) {
+    // try {
+    // Pair<Integer, Integer> temp = this.queue_.removeLast();
+    // this.map_.remove(temp);
+    // } catch (NoSuchElementException ignored) {
+    // // System.out.println(
+    // // "Failed to remove last element from RLUCache: " + map_.size() + " " + queue_.size() + " over " + capacity_);
+    // }
+    // }
+    // this.map_.put(pair, file);
+    // this.queue_.addFirst(pair);
+    // // System.out.println("RLUCache " + id + ": " + this.map_.size() + " " + this.queue_.size() + " over " + this.capacity_);
+    // }
+    // }
 }
