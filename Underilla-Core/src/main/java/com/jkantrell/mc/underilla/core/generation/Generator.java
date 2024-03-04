@@ -1,8 +1,6 @@
 package com.jkantrell.mc.underilla.core.generation;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import com.jkantrell.mc.underilla.core.api.Block;
 import com.jkantrell.mc.underilla.core.api.ChunkData;
@@ -22,7 +20,7 @@ public class Generator {
     private final WorldReader worldReader_;
     private final Merger merger_;
     private final GenerationConfig config_;
-    public static Map<String, Long> times;
+    // public static Map<String, Long> times;
 
     // CONSTRUCTORS
     public Generator(WorldReader worldReader, GenerationConfig config) {
@@ -35,7 +33,7 @@ public class Generator {
                     config_.preserveBiomes, config.ravinBiomes, config_.keptReferenceWorldBlocks,
                     config_.mergeStrategy.equals(MergeStrategy.SURFACE) ? config_.mergeDepth : 0);
         };
-        times = new HashMap<>();
+        // times = new HashMap<>();
     }
 
     public int getBaseHeight(WorldInfo worldInfo, int x, int z, HeightMapType heightMap) {

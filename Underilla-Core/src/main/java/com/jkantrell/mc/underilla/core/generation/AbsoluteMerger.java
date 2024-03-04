@@ -52,10 +52,8 @@ class AbsoluteMerger implements Merger {
         // Generator.addTime("Create VectorIterable to merge land", startTime);
         for (Vector<Integer> v : iterable) {
             // startTime = System.currentTimeMillis();
-            Block b = reader.blockAt(v).orElse(airBlock);
             // Generator.addTime("Read block data from custom world", startTime);
             // startTime = System.currentTimeMillis();
-            Block vanillaBlock = chunkData.getBlock(v);
             // Generator.addTime("Read block data from vanilla world", startTime);
 
             // For every collumn of bloc calculate the lower block to remove that migth be lower than height_.
@@ -71,6 +69,8 @@ class AbsoluteMerger implements Merger {
             // Place the custom world bloc over 55 (or -64 if is preseved biome) or if it is a custom ore or if it is air,
             // or if vanilla world have watter or grass or sand over 30
             // and do not replace liquid vanilla blocks by air. (to preserve water and lava lackes)
+            Block b = reader.blockAt(v).orElse(airBlock);
+            Block vanillaBlock = chunkData.getBlock(v);
             if (((v.y() > columnHeigth) || (isCustomWorldOreOutOfVanillaCaves(b, vanillaBlock))
                     || (v.y() > 30 && (vanillaBlock.isLiquid() || vanillaBlock.getName().equalsIgnoreCase("GRASS_BLOCK")
                             || vanillaBlock.getName().equalsIgnoreCase("SAND") || vanillaBlock.getName().equalsIgnoreCase("SAND_STONE")
