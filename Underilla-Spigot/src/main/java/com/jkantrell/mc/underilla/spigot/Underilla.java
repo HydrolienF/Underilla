@@ -2,10 +2,8 @@ package com.jkantrell.mc.underilla.spigot;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.java.JavaPlugin;
-import com.jkantrell.mc.underilla.core.generation.Generator;
 import com.jkantrell.mc.underilla.spigot.generation.UnderillaChunkGenerator;
 import com.jkantrell.mc.underilla.spigot.impl.BukkitWorldReader;
 import com.jkantrell.mc.underilla.spigot.io.Config;
@@ -71,15 +69,15 @@ public final class Underilla extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        try {
-            long totalTime = Generator.times.entrySet().stream().mapToLong(Map.Entry::getValue).sum();
-            for (Map.Entry<String, Long> entry : Generator.times.entrySet()) {
-                this.getServer().getLogger()
-                        .info(entry.getKey() + " took " + entry.getValue() + "ms (" + (entry.getValue() * 100 / totalTime) + "%)");
-            }
-        } catch (Exception e) {
-            this.getServer().getLogger().info("Fail to print times");
-        }
+        // try {
+        // long totalTime = Generator.times.entrySet().stream().mapToLong(Map.Entry::getValue).sum();
+        // for (Map.Entry<String, Long> entry : Generator.times.entrySet()) {
+        // this.getServer().getLogger()
+        // .info(entry.getKey() + " took " + entry.getValue() + "ms (" + (entry.getValue() * 100 / totalTime) + "%)");
+        // }
+        // } catch (Exception e) {
+        // this.getServer().getLogger().info("Fail to print times");
+        // }
     }
 
     public static Underilla getPlugin() { return plugin; }

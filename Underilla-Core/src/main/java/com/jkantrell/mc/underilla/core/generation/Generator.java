@@ -67,9 +67,9 @@ public class Generator {
         // The only configuration where we need to merge biome here is when we want to transfer biomes from the reference world
         // & keep underground biomes.
         if (config_.needToMixBiomes()) {
-            long time = System.currentTimeMillis();
+            // long time = System.currentTimeMillis();
             this.merger_.mergeBiomes(reader, chunkData);
-            addTime("mergeBiomes", time);
+            // addTime("mergeBiomes", time);
         }
     }
 
@@ -100,7 +100,7 @@ public class Generator {
 
     public boolean shouldGenerateStructures(int chunkX, int chunkZ) { return this.config_.generateStructures; }
 
-    public static void addTime(String name, long startTime) {
-        times.put(name, times.getOrDefault(name, 0l) + (System.currentTimeMillis() - startTime));
-    }
+    // public static void addTime(String name, long startTime) {
+    // times.put(name, times.getOrDefault(name, 0l) + (System.currentTimeMillis() - startTime));
+    // }
 }

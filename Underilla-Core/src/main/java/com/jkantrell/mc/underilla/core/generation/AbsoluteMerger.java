@@ -39,7 +39,7 @@ class AbsoluteMerger implements Merger {
     // }
     @Override
     public void mergeLand(ChunkReader reader, ChunkData chunkData, @Nullable ChunkReader cavesReader) {
-        long startTime = System.currentTimeMillis();
+        // long startTime = System.currentTimeMillis();
         Block airBlock = reader.blockFromTag(MCAUtil.airBlockTag()).get();
         // int airColumn = Math.max(reader.airSectionsBottom(), -64);
         int airColumn = reader.airSectionsBottom();
@@ -49,25 +49,25 @@ class AbsoluteMerger implements Merger {
         int columnHeigth = this.height_;
         int lastX = -1;
         int lastZ = -1;
-        Generator.addTime("Create VectorIterable to merge land", startTime);
+        // Generator.addTime("Create VectorIterable to merge land", startTime);
         for (Vector<Integer> v : iterable) {
-            startTime = System.currentTimeMillis();
+            // startTime = System.currentTimeMillis();
             Block b = reader.blockAt(v).orElse(airBlock);
-            Generator.addTime("Read block data from custom world", startTime);
-            startTime = System.currentTimeMillis();
+            // Generator.addTime("Read block data from custom world", startTime);
+            // startTime = System.currentTimeMillis();
             Block vanillaBlock = chunkData.getBlock(v);
-            Generator.addTime("Read block data from vanilla world", startTime);
+            // Generator.addTime("Read block data from vanilla world", startTime);
 
             // For every collumn of bloc calculate the lower block to remove that migth be lower than height_.
-            startTime = System.currentTimeMillis();
+            // startTime = System.currentTimeMillis();
             if (v.x() != lastX || v.z() != lastZ) {
                 lastX = v.x();
                 lastZ = v.z();
                 columnHeigth = (isPreservedBiome(reader, v) ? -64 : getLowerBlockToRemove(reader, v.x(), v.z(), airBlock));
             }
-            Generator.addTime("Calculate lower block to remove", startTime);
+            // Generator.addTime("Calculate lower block to remove", startTime);
 
-            startTime = System.currentTimeMillis();
+            // startTime = System.currentTimeMillis();
             // Place the custom world bloc over 55 (or -64 if is preseved biome) or if it is a custom ore or if it is air,
             // or if vanilla world have watter or grass or sand over 30
             // and do not replace liquid vanilla blocks by air. (to preserve water and lava lackes)
@@ -90,7 +90,7 @@ class AbsoluteMerger implements Merger {
             if (v.y() == columnHeigth && vanillaBlock.isAir() && isRavinBiome(reader, v) && isAirCollumn(chunkData, v, 30)) {
                 chunkData.setRegion(v.x(), columnHeigth, v.z(), v.x() + 1, airColumn, v.z() + 1, airBlock);
             }
-            Generator.addTime("Merge block or not", startTime);
+            // Generator.addTime("Merge block or not", startTime);
         }
     }
 
