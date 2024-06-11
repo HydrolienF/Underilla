@@ -8,7 +8,7 @@
 [ ![discord-shield][] ][discord-invite]
 
 # Underilla
-Underilla is a Bukkit / Spigot based plugin for Minecraft Servers to 'merge' existing custom Minecraft word surfaces and vanilla undergrounds. It works by allowing the vanilla generation engine create chunks as normal, then intercepting the generator and forcing the surface of the original world, which works as a reference. In oder worlds, Underilla generates a brand-new world with vanilla undergrounds, but cloning the surface of an already existing world.
+Underilla is a Paper based plugin for Minecraft Servers to 'merge' existing custom Minecraft word surfaces and vanilla undergrounds. It works by allowing the vanilla generation engine create chunks as normal, then intercepting the generator and forcing the surface of the original world, which works as a reference. In oder worlds, Underilla generates a brand-new world with vanilla undergrounds, but cloning the surface of an already existing world.
 
 It's original purpose is adding vanilla caves to custom [WorldPainter](https://www.worldpainter.net/) worlds, but it would perfectly work for any pre-generated world.
 
@@ -28,12 +28,12 @@ It's original purpose is adding vanilla caves to custom [WorldPainter](https://w
 ## Getting started
 ### Perquisites
 
-- Java 17.
+- Java 21.
 - A pre-generated world to use as a reference (Such as a WorldPainter world).
-- A Spigot / Paper (or forks) Minecraft Server of version [1.19.4 - 1.20.4]. It might work with upper version, but only 1.19.4, 1.20.1, 1.20.2, 1.20.4 have been tested.
+- A [Paper](https://papermc.io/software/paper) (or forks) Minecraft Server of version [1.20.5 - 1.20.6]. It might work with upper version, but only 1.20.6 have been tested. Use old release for [1.19 - 1.20.4] compatibility.
 
 ### Single player or non-Bukkit
-Underilla is currently only implemented as a Spigot plugin, so it runs only on Spigot (or fork) servers. If you have a Vanilla, Forge or non Bukkit-based server; or looking for a single player experience; you may [use a local Spigot server](https://www.spigotmc.org/wiki/spigot-installation/) to pre-generate a fully-merged world and then copy the resulting world folder to your actual `saves` folder.
+Underilla is currently only implemented as a Paper plugin, so it runs only on Paper (or fork) servers. If you have a Vanilla, Forge or non Bukkit-based server; or looking for a single player experience; you may [use a local Paper server](https://papermc.io/software/paper) to pre-generate a fully-merged world and then copy the resulting world folder to your actual `saves` folder.
 
 ### Installation
 
@@ -58,7 +58,8 @@ Underilla is currently only implemented as a Spigot plugin, so it runs only on S
 **Important:** Make sure your server's main world is still set to `world`. Aside from this plugin, the server itself doesn't need to "know" about the reference world.
 
 ### Pregenerate
-Underilla is significantly slower than the vanilla generator, as it doesn't relly on noise generation but on reading the reference world's region `nbt` files and analyzing its patterns to 'clone' its surface to a vanilla world. So, if your world is intended for heavy duty in a big server. It's recommended to pre-generate the whole reference world area with a chunk generator plugin, such as [Chunky](https://www.spigotmc.org/resources/chunky.81534/). I'm planning adding a build-in pre-generation system in the future.
+Underilla is significantly slower than the vanilla generator, as it doesn't relly on noise generation but on reading the reference world's region `nbt` files and analyzing its patterns to 'clone' its surface to a vanilla world. So, if your world is intended for heavy duty in a big server. It's recommended to pre-generate the whole reference world area with a chunk generator plugin, such as [Chunky](https://hangar.papermc.io/pop4959/Chunky). I'm planning adding a build-in pre-generation system in the future.
+To increase generation speed you should edit `worker-threads` in your `config/paper-global.yml` to match your number of CPU cores, else paper won't use all CPU cores aviables. Using your number of core instead of default value usually double speed generation.
 
 ### Performances
 Huge map generation can takes hours or even days, here is some stats about performance to help you choose your configuration settings.
@@ -76,7 +77,6 @@ For a 50000 * 30000 world, it would take 40 hours to generate with Minecraft van
 - Underilla's generation disables Minecraft's chunk blender, which means there will be sharp old-school chunk borders at the edge of the reference world's chunks. This may be tackled by trimming your custom world chunks around the edges to generate blended chunks ahead of time.
 - Due to Spigot's generation API, outside the reference world's area, heightmaps are broken, which has an impact on structures. You may work around this by pre-generating the whole reference world area, and then disabling Underilla.
 - **Relative strategy only:** Little underground lava and water pockets will translate to odd floating blobs in the final world if they overlap with large caves. Avoid such generation patterns.
-- **With kept biome & relative strategy only**: As Underilla need to mix biome between the 2 world biome, it didn't edit Minecraft vanilla generator biome, this generator will places structures based on the seed, not the actual biomes. This results in structures sometimes in totally unrelated biomes. Shipwrecks, monuments and other ocean structures are the most noticeable. To work around this, you can get rid of kept biomes or you may blacklist structures as you wish in the config file, and spawn them manually using `/place` or use a plugin to place them as [WorldPopulatorH](https://github.com/HydrolienF/WorldPopulatorH).
 
 ## WorldPainter considerations
 If you're going to plug your custom WorldPainter world into Underilla, consider before exporting:
@@ -91,5 +91,7 @@ If you're going to plug your custom WorldPainter world into Underilla, consider 
 Create a working jar with `./gradlew buildDependents`
 
 ## TODO
-Build-in pre-generation system.
-Allow to generate the 2nd world on the fly.
+- Build-in pre-generation system.
+- Allow to generate the 2nd world on the fly.
+- Feature generation filter.
+- Transfer custom biomes.

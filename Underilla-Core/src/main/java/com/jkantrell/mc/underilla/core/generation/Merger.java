@@ -9,5 +9,4 @@ interface Merger {
 
     // void merge(ChunkReader reader, ChunkData chunkData);
     void mergeLand(@Nonnull ChunkReader reader, @Nonnull ChunkData chunkData, @Nullable ChunkReader cavesReader);
-    void mergeBiomes(@Nonnull ChunkReader reader, @Nonnull ChunkData chunkData);
 }

@@ -1,3 +1,5 @@
+# # The world to merge the terrain into
+# world: "world"
 
 # The world to copy the terrain from
 reference_world: "world_base"
@@ -53,6 +55,14 @@ surface_and_absolute:
 relative_and_surface:
   depth: 6
 
+
+ignored_block_for_surface_calculation:
+  - .*LEAVES
+  - .*LOG
+  - .*WOOD
+  - .*PLANKS
+  - .*FENCE
+  - ICE
 
 # The range the transition between vanilla and reference worlds takes, the wider, the smoother.
 # <= 0 results in a sharp transition.

@@ -1,6 +1,7 @@
 name: Underilla
 author: Jeshuakrc, Hydrolien
-version: '${project.version}'
-main: com.jkantrell.mc.underilla.spigot.Underilla
-api-version: '1.19' # to support 1.19.4, it don't break anything in 1.20.x to use 1.19 api version.
+version: '$version'
+main: ${group}.Underilla
+description: $description
+api-version: "$apiVersion"
 load: STARTUP

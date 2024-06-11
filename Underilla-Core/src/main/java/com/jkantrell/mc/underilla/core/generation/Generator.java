@@ -66,11 +66,11 @@ public class Generator {
         this.merger_.mergeLand(reader, chunkData, cavesReader);
         // The only configuration where we need to merge biome here is when we want to transfer biomes from the reference world
         // & keep underground biomes.
-        if (config_.needToMixBiomes()) {
-            long time = System.currentTimeMillis();
-            this.merger_.mergeBiomes(reader, chunkData);
-            addTime("mergeBiomes", time);
-        }
+        // if (config_.needToMixBiomes()) {
+        // long time = System.currentTimeMillis();
+        // this.merger_.mergeBiomes(reader, chunkData);
+        // addTime("mergeBiomes", time);
+        // }
     }
 
     public void reInsertLiquids(ChunkReader reader, ChunkData chunkData) {

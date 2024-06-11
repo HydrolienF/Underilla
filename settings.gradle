@@ -23,4 +23,4 @@ plugins {
 }
 
 rootProject.name = 'Underilla'
-include('Underilla-Core', "Underilla-Fabric", "Underilla-Spigot")
+include('Underilla-Core', "Underilla-Spigot") //, "Underilla-Fabric"

@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import org.bukkit.Bukkit;
 import org.bukkit.HeightMap;
 import org.bukkit.World;
-import org.bukkit.block.Biome;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
@@ -15,11 +13,9 @@ import org.bukkit.generator.LimitedRegion;
 import org.bukkit.generator.WorldInfo;
 import com.jkantrell.mc.underilla.core.api.HeightMapType;
 import com.jkantrell.mc.underilla.core.generation.Generator;
-import com.jkantrell.mc.underilla.core.generation.MergeStrategy;
 import com.jkantrell.mc.underilla.core.reader.ChunkReader;
 import com.jkantrell.mc.underilla.core.reader.WorldReader;
 import com.jkantrell.mc.underilla.spigot.Underilla;
-import com.jkantrell.mc.underilla.spigot.impl.BukkitBiome;
 import com.jkantrell.mc.underilla.spigot.impl.BukkitChunkData;
 import com.jkantrell.mc.underilla.spigot.impl.BukkitRegionChunkData;
 import com.jkantrell.mc.underilla.spigot.impl.BukkitWorldInfo;
@@ -116,19 +112,9 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
         return this.delegate_.shouldGenerateStructures(chunkX, chunkZ);
     }
 
+    // To support custom biomes, we can't use bukkit biome provider. So biome merging is done in CustomBiomeSource.
     @Override
-    public BiomeProvider getDefaultBiomeProvider(@Nonnull WorldInfo worldInfo) {
-        // if biome need to be transfered from the custom world add a custom biome provider
-        // (For MergeStrategy.RELATIVE, kept underground biomes are transfered in the mergeBiomes method not here)
-        if (CONFIG.transferBiomes && (!CONFIG.mergeStrategy.equals(MergeStrategy.RELATIVE) || CONFIG.keptUndergroundBiomes.isEmpty())) {
-            Bukkit.getLogger()
-                    .info("Underilla Use the custom biome provider from file data. Structures will be generate in the right biome.");
-            return new BiomeProviderFromFile();
-        } else {
-            Bukkit.getLogger().info("Underilla Use the default biome provider. Structures will be generate in bad biomes.");
-            return null;
-        }
-    }
+    public BiomeProvider getDefaultBiomeProvider(@Nonnull WorldInfo worldInfo) { return null; }
 
 
     // CLASSES
@@ -146,7 +132,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
         }
 
 
-        // OVERWRITES
+        // OVERRITES
         @Override
         public void populate(WorldInfo worldInfo, Random random, int chunkX, int chunkZ, LimitedRegion limitedRegion) {
             if (!CONFIG.generateCaves) {
@@ -161,26 +147,4 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
             this.generator_.reInsertLiquids(reader, chunkData);
         }
     }
-
-    private class BiomeProviderFromFile extends BiomeProvider {
-
-        @Override
-        public @Nonnull Biome getBiome(@Nonnull WorldInfo worldInfo, int x, int y, int z) {
-            BukkitBiome biome = (BukkitBiome) worldReader_.biomeAt(x, y, z).orElse(null);
-            if (worldCavesReader_ != null) {
-                BukkitBiome cavesBiome = (BukkitBiome) worldCavesReader_.biomeAt(x, y, z).orElse(null);
-                if (cavesBiome != null && CONFIG.transferCavesWorldBiomes.contains(cavesBiome.getBiome())) {
-                    return cavesBiome.getBiome();
-                }
-            }
-            return biome == null ? Biome.PLAINS : biome.getBiome();
-        }
-
-        @Override
-        public @Nonnull List<Biome> getBiomes(@Nonnull WorldInfo worldInfo) {
-            return List.of(Biome.values()).stream().filter(b -> !b.equals(Biome.CUSTOM)).toList();
-        }
-
-    }
-
 }

@@ -6,6 +6,7 @@ import com.jkantrell.mc.underilla.core.api.Biome;
 import com.jkantrell.mc.underilla.core.api.Block;
 import com.jkantrell.mc.underilla.core.api.ChunkData;
 import com.jkantrell.mc.underilla.core.vector.VectorIterable;
+import com.jkantrell.mc.underilla.spigot.Underilla;
 
 public class BukkitRegionChunkData implements ChunkData {
 
@@ -45,7 +46,7 @@ public class BukkitRegionChunkData implements ChunkData {
     @Override
     public Biome getBiome(int x, int y, int z) {
         org.bukkit.block.Biome b = this.region_.getBiome(this.absX_ + x, y, this.absZ_ + z);
-        return new BukkitBiome(b);
+        return new BukkitBiome(b.name());
     }
     @Override
     public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Block block) {
@@ -57,12 +58,22 @@ public class BukkitRegionChunkData implements ChunkData {
             return;
         }
         this.region_.setBlockData(this.absX_ + x, y, this.absZ_ + z, bukkitBlock.getBlockData());
+        // TODO nexts lines are never called
+        if (bukkitBlock.getSpawnedType().isPresent()) {
+            if (region_.getWorld().getBlockAt(this.absX_ + x, y,
+                    this.absZ_ + z) instanceof org.bukkit.block.CreatureSpawner creatureSpawner) {
+                creatureSpawner.setSpawnedType(bukkitBlock.getSpawnedType().get());
+                creatureSpawner.update();
+                Underilla.getInstance().getLogger().info("\nSet spawner type to " + bukkitBlock.getSpawnedType().get());
+            }
+        }
     }
     @Override
     public void setBiome(int x, int y, int z, Biome biome) {
         if (!(biome instanceof BukkitBiome bukkitBiome)) {
             return;
         }
-        this.region_.setBiome(this.absX_ + x, y, this.absZ_ + z, bukkitBiome.getBiome());
+        // this.region_.setBiome(this.absX_ + x, y, this.absZ_ + z, bukkitBiome.getBiome());
+        BiomeHelper.setCustomBiome(bukkitBiome.getName(), this.absX_ + x, y, this.absZ_ + z);
     }
 }

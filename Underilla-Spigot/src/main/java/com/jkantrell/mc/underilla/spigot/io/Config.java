@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
-import org.bukkit.block.Biome;
 import org.bukkit.generator.structure.Structure;
 import com.jkantrell.mc.underilla.core.generation.GenerationConfig;
 import com.jkantrell.mc.underilla.core.generation.MergeStrategy;
@@ -45,7 +44,7 @@ public class Config extends AbstractYamlConfig {
     public String cavesWorldName = "caves_world";
 
     @ConfigField(path = "transfered_caves_world_biomes")
-    public List<Biome> transferCavesWorldBiomes = List.of(Biome.DEEP_DARK, Biome.DRIPSTONE_CAVES, Biome.LUSH_CAVES);
+    public List<String> transferCavesWorldBiomes = List.of("minecraft:deep_dark", "minecraft:dripstone_caves", "minecraft:lush_caves");
 
     @ConfigField(path = "strategy")
     public MergeStrategy mergeStrategy = MergeStrategy.RELATIVE;
@@ -60,7 +59,7 @@ public class Config extends AbstractYamlConfig {
     public int mergeDepth = 12;
 
     @ConfigField(path = "relative.kept_underground_biomes")
-    public List<Biome> keptUndergroundBiomes = List.of();
+    public List<String> keptUndergroundBiomes = List.of();
 
     @ConfigField(path = "kept_reference_world_blocks")
     public List<String> keptReferenceWorldBlocks = List.of();
@@ -68,14 +67,17 @@ public class Config extends AbstractYamlConfig {
     @ConfigField(path = "surface_and_absolute.limit")
     public int mergeLimit = 22;
 
+    @ConfigField(path = "ignored_block_for_surface_calculation")
+    public List<String> ignoredBlockForSurfaceCalculation = List.of("LEAVES", "LOGS");
+
     @ConfigField(path = "blend_range")
     public int mergeBlendRange = 8;
 
     @ConfigField(path = "preserve_biomes")
-    public List<Biome> preserveBiomes = List.of();
+    public List<String> preserveBiomes = List.of();
 
     @ConfigField(path = "ravin_biomes")
-    public List<Biome> ravinBiomes = List.of();
+    public List<String> ravinBiomes = List.of();
 
     @ConfigField(path = "structures.enabled")
     public boolean generateStructures = true;

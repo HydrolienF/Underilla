@@ -5,20 +5,27 @@ import com.jkantrell.mc.underilla.core.api.Biome;
 public class BukkitBiome implements Biome {
 
     // FIELDS
-    private org.bukkit.block.Biome biome_;
+    private String name;
 
 
-    // CONSTRUCTORS
-    public BukkitBiome(org.bukkit.block.Biome biome) { this.biome_ = biome; }
+    // // CONSTRUCTORS
+    // public BukkitBiome(org.bukkit.block.Biome biome) { this.name = biome.name(); }
+    public BukkitBiome(String name) {
+        name = name.toLowerCase();
+        if (!name.contains(":")) {
+            name = "minecraft:" + name;
+        }
+        this.name = name;
+    }
 
 
-    // GETTERS
-    public org.bukkit.block.Biome getBiome() { return this.biome_; }
+    // // // GETTERS
+    // public org.bukkit.block.Biome getBiome() { return NMSBiomeUtils.getBukkitBiome(this.name); }
 
 
     // IMPLEMENTATIONS
     @Override
-    public String getName() { return this.biome_.name(); }
+    public String getName() { return name; }
     @Override
     public boolean equals(Object o) {
         if (o == null) {
@@ -30,9 +37,9 @@ public class BukkitBiome implements Biome {
         if (!(o instanceof BukkitBiome bukkitBiome)) {
             return false;
         }
-        return this.biome_.equals(bukkitBiome.biome_);
+        return this.name.equals(bukkitBiome.name);
     }
 
     @Override
-    public String toString() { return "BukkitBiome{" + "biome_=" + biome_ + '}'; }
+    public String toString() { return "BukkitBiome{" + name + '}'; }
 }

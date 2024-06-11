@@ -32,11 +32,6 @@ class AbsoluteMerger implements Merger {
 
 
     // IMPLEMENTATIONS
-    // @Override
-    // public void merge(ChunkReader reader, ChunkData chunkData) {
-    // this.mergeLand(reader, chunkData);
-    // // this.mergeBiomes(reader, chunkData); // No need to set biome for chunk. It's done by the generator.
-    // }
     @Override
     public void mergeLand(ChunkReader reader, ChunkData chunkData, @Nullable ChunkReader cavesReader) {
         long startTime = System.currentTimeMillis();
@@ -101,15 +96,10 @@ class AbsoluteMerger implements Merger {
     /** return the 1st block mergeDepth_ blocks under surface or heigth_ */
     private int getLowerBlockToRemove(Reader reader, int x, int z, Block defaultBlock) {
         int lbtr = this.height_ + mergeDepth_;
-        while (!reader.blockAt(x, lbtr, z).orElse(defaultBlock).isSolid() && lbtr > -64) {
+        while (!reader.blockAt(x, lbtr, z).orElse(defaultBlock).isSolidAndSurfaceBlock() && lbtr > -64) {
             lbtr--;
         }
         return lbtr - mergeDepth_;
-    }
-
-    @Override
-    public void mergeBiomes(ChunkReader reader, ChunkData chunkData) {
-        // No need to set biome for chunk. It's done by the generator.
     }
 
 
