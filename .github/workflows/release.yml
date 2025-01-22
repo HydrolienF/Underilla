@@ -48,9 +48,24 @@ jobs:
       - name: Remove all lines after the 2nd title in CHANGELOG.md
         shell: pwsh
         run: |
+          $changelogPath = "CHANGELOG.md"
           $content = Get-Content -Path CHANGELOG.md
-          $content = $content -split '# ' | Select-Object -First 3
-          Set-Content -Path CHANGELOG.md -Value $content
+          $indices = ($content | ForEach-Object { $_ } | Select-String -Pattern "^#" | ForEach-Object { $_.LineNumber - 1 })
+
+          if ($indices.Count -ge 2) {
+              $startIndex = $indices[0]
+              $endIndex = $indices[1]
+
+              $changes = $content[$startIndex..($endIndex - 1)]
+
+              $changes = $changes | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+
+              $changes -join "`n" | Set-Content -Path $changelogPath
+              Write-Output "Changelog updated"
+          } else {
+              Write-Output "Not as much lines as expected"
+          }
+
 
       - name: Create Release
         id: createRelease

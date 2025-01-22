@@ -15,6 +15,7 @@ import org.bukkit.block.Block;
 import com.jkantrell.mc.underilla.spigot.Underilla;
 
 // Upgraded version from WorldSelectorH.
+// TODO test if we can improve performance by iterating region per region instead of moving one x and one z at a time. And inside each region, iterate by chunks.
 public class Selector implements Serializable {
     private final int xMin;
     private final int zMin;
