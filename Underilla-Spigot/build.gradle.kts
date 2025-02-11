@@ -8,10 +8,11 @@ plugins {
     `maven-publish` // Add ./gradlew publishToMavenLocal
     id("xyz.jpenilla.run-paper") version "2.3.1"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("org.sonarqube") version "5.0.0.4638"
 }
 
 group = "com.jkantrell.mc.underilla"
-version = "2.0.10"
+version = "2.0.11"
 description="Generate vanilla cave in custom world."
 val mainMinecraftVersion = "1.21.4"
 val supportedMinecraftVersions = "1.21.3 - 1.21.4"
@@ -32,7 +33,6 @@ repositories {
 dependencies {
     // compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT") // without paperweight
     paperweight.paperDevBundle("$mainMinecraftVersion-R0.1-SNAPSHOT")
-    implementation("com.jkantrell:Yamlizer:main-SNAPSHOT")
     implementation("fr.formiko.mc.biomeutils:biomeutils:1.1.8")
     implementation("com.github.FormikoLudo:Utils:0.0.9")
     implementation("org.bstats:bstats-bukkit:3.1.0")
@@ -146,5 +146,13 @@ hangarPublish { // ./gradlew publishPluginPublicationToHangar
                 platformVersions.set(versions)
             }
         }
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.organization", "mvndicraft")
+        property("sonar.projectKey", project.name)
+        property("sonar.host.url", "https://sonarcloud.io/")
     }
 }
