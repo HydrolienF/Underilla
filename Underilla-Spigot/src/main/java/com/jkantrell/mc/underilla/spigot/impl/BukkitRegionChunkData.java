@@ -1,6 +1,5 @@
 package com.jkantrell.mc.underilla.spigot.impl;
 
-import fr.formiko.mc.biomeutils.NMSBiomeUtils;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.generator.LimitedRegion;
 import com.jkantrell.mc.underilla.core.api.Biome;
@@ -13,13 +12,13 @@ import com.jkantrell.mc.underilla.spigot.Underilla;
 public class BukkitRegionChunkData implements ChunkData {
 
     // FIELDS
-    private final LimitedRegion region_;
+    private final LimitedRegion region;
     private final int minHeight_, maxHeight_, chunkX_, chunkZ_, absX_, absZ_;
 
 
     // CONSTRUCTORS
     public BukkitRegionChunkData(LimitedRegion region, int chunkX, int chunkZ, int minHeight, int maxHeight) {
-        this.region_ = region;
+        this.region = region;
         this.minHeight_ = minHeight;
         this.maxHeight_ = maxHeight;
         this.chunkX_ = chunkX;
@@ -30,7 +29,7 @@ public class BukkitRegionChunkData implements ChunkData {
 
 
     // GETTERS
-    public LimitedRegion getRegion() { return this.region_; }
+    public LimitedRegion getRegion() { return this.region; }
 
 
     // IMPLEMENTATIONS
@@ -43,14 +42,14 @@ public class BukkitRegionChunkData implements ChunkData {
     @Override
     public Block getBlock(int x, int y, int z) {
         // TODO also save state of block if needed (for structure chests).
-        // this.region_.getBlockState(this.absX_ + x, y, this.absZ_ + z);
-        BlockData d = this.region_.getBlockData(this.absX_ + x, y, this.absZ_ + z);
+        // this.region.getBlockState(this.absX_ + x, y, this.absZ_ + z);
+        BlockData d = this.region.getBlockData(this.absX_ + x, y, this.absZ_ + z);
         return new BukkitBlock(d);
     }
     @Override
     public Biome getBiome(int x, int y, int z) {
-        org.bukkit.block.Biome b = this.region_.getBiome(this.absX_ + x, y, this.absZ_ + z);
-        return new BukkitBiome(b.name());
+        org.bukkit.block.Biome b = this.region.getBiome(this.absX_ + x, y, this.absZ_ + z);
+        return new BukkitBiome(b.key().asString());
     }
     @Override
     public void setRegion(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Block block) {
@@ -61,10 +60,10 @@ public class BukkitRegionChunkData implements ChunkData {
         if (!(block instanceof BukkitBlock bukkitBlock)) {
             return;
         }
-        this.region_.setBlockData(this.absX_ + x, y, this.absZ_ + z, bukkitBlock.getBlockData());
+        this.region.setBlockData(this.absX_ + x, y, this.absZ_ + z, bukkitBlock.getBlockData());
         // TODO nexts lines are never called
         if (bukkitBlock.getSpawnedType().isPresent()) {
-            if (region_.getWorld().getBlockAt(this.absX_ + x, y,
+            if (region.getWorld().getBlockAt(this.absX_ + x, y,
                     this.absZ_ + z) instanceof org.bukkit.block.CreatureSpawner creatureSpawner) {
                 creatureSpawner.setSpawnedType(bukkitBlock.getSpawnedType().get());
                 creatureSpawner.update();
@@ -77,7 +76,6 @@ public class BukkitRegionChunkData implements ChunkData {
         if (!(biome instanceof BukkitBiome bukkitBiome)) {
             return;
         }
-        // this.region_.setBiome(this.absX_ + x, y, this.absZ_ + z, bukkitBiome.getBiome());
-        NMSBiomeUtils.setCustomBiome(bukkitBiome.getName(), this.absX_ + x, y, this.absZ_ + z, this.region_.getWorld());
+        Underilla.getUnderillaConfig().getSelector().getWorld().setBiome(this.absX_ + x, y, this.absZ_ + z, bukkitBiome.getBiome());
     }
 }

@@ -72,10 +72,6 @@ public class CleanBlocksTask extends FollowableProgressTask {
                     // Keep track of removed and final blocks
                     Material finalMaterial = currentBlock.getType();
                     if (startMaterial != finalMaterial) {
-                        // if (!removedBlock.containsKey(startMaterial)) {
-                        // Underilla.info("Removed block: " + startMaterial + " at " + currentBlock.getX() + " " + currentBlock.getY()
-                        // + " " + currentBlock.getZ());
-                        // }
                         // add 1 finalMaterial to replacedBlock
                         if (!replacedBlock.containsKey(finalMaterial)) {
                             replacedBlock.put(finalMaterial, new EnumMap<>(Material.class));
@@ -90,8 +86,8 @@ public class CleanBlocksTask extends FollowableProgressTask {
                 if (selector == null || selector.progress() >= 1 || stop) {
                     printProgress(processedBlocks, startTime);
 
-                    Underilla.info("Cleaning blocks task " + taskID + " finished in "
-                            + Duration.ofMillis(System.currentTimeMillis() - startTime));
+                    Underilla.info(
+                            "Cleaning blocks task " + taskID + " finished in " + Duration.ofMillis(System.currentTimeMillis() - startTime));
                     Underilla.info("Replaced blocks: " + replacedBlock);
                     Underilla.info("Final blocks: " + finalBlock);
                     cancel();

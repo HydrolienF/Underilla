@@ -38,6 +38,10 @@ public final class Underilla extends JavaPlugin {
     public static final int REGION_SIZE = 512;
     public static final int BIOME_AREA_SIZE = 4;
     public static final long MS_PER_SECOND = 1000;
+    private static final String TODO = "todo";
+    private static final String DOING = "doing";
+    private static final String DONE = "done";
+    private static final String FAILED = "failed";
     private CleanBlocksTask cleanBlocksTask;
     private CleanEntitiesTask cleanEntitiesTask;
     private StructureEventListener structureEventListener;
@@ -162,13 +166,13 @@ public final class Underilla extends JavaPlugin {
     private void runStepsOnEnabled() {
         boolean needARestart = false;
 
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_DOWNLOAD_DEPENDENCY_PLUGINS).equals("todo")) {
+        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_DOWNLOAD_DEPENDENCY_PLUGINS).equals(TODO)) {
             needARestart = ServerSetup.downloadNeededDependencies() || needARestart;
         }
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_SETUP_PAPER_FOR_QUICK_GENERATION).equals("todo")) {
+        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_SETUP_PAPER_FOR_QUICK_GENERATION).equals(TODO)) {
             needARestart = ServerSetup.setupPaperWorkerthreads() || needARestart;
         }
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_SET_UNDERILLA_AS_WORLD_GENERATOR).equals("todo")) {
+        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_SET_UNDERILLA_AS_WORLD_GENERATOR).equals(TODO)) {
             needARestart = ServerSetup.setupBukkitWorldGenerator() || needARestart;
         }
         if (needARestart) {
@@ -180,35 +184,35 @@ public final class Underilla extends JavaPlugin {
         }
     }
     public void runNextStepsAfterWorldInit() {
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals("todo")) {
+        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(TODO)) {
             runChunky();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals("doing")) {
+        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(DOING)) {
             restartChunky();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals("todo")) {
+        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(TODO)) {
             runCleanBlocks();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals("doing")) {
+        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DOING)) {
             restartCleanBlocks();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals("todo")) {
+        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(TODO)) {
             runCleanEntities();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals("doing")) {
+        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DOING)) {
             restartCleanEntities();
         }
     }
     public boolean allStepsDone() {
-        return Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals("done")
-                && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals("done")
-                && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals("done");
+        return Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(DONE)
+                && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DONE)
+                && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DONE);
     }
     public void validateTask(StringKeys taskKey, boolean done) {
-        getUnderillaConfig().saveNewValue(taskKey, done ? "done" : "failed");
+        getUnderillaConfig().saveNewValue(taskKey, done ? DONE : FAILED);
         runNextStepsAfterWorldInit();
     }
     public void validateInitServerTask(StringKeys taskKey, boolean done) {
-        getUnderillaConfig().saveNewValue(taskKey, done ? "done" : "failed");
+        getUnderillaConfig().saveNewValue(taskKey, done ? DONE : FAILED);
     }
     public void validateTask(StringKeys taskKey) { validateTask(taskKey, true); }
     public void validateInitServerTask(StringKeys taskKey) { validateInitServerTask(taskKey, true); }
-    public void setToDoingTask(StringKeys taskKey) { getUnderillaConfig().saveNewValue(taskKey, "doing"); }
+    public void setToDoingTask(StringKeys taskKey) { getUnderillaConfig().saveNewValue(taskKey, DOING); }
 
     // run tasks ------------------------------------------------------------------------------------------------------
     private void runChunky(boolean restart) {
@@ -282,11 +286,11 @@ public final class Underilla extends JavaPlugin {
 
     // stop tasks -----------------------------------------------------------------------------------------------------
     private void stopTasks() {
-        if (cleanBlocksTask != null && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals("doing")) {
+        if (cleanBlocksTask != null && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DOING)) {
             Selector selector = cleanBlocksTask.stop();
             selector.saveIn("cleanBlocksTask");
         }
-        if (cleanEntitiesTask != null && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals("doing")) {
+        if (cleanEntitiesTask != null && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DOING)) {
             Selector selector = cleanEntitiesTask.stop();
             selector.saveIn("cleanEntitiesTask");
         }

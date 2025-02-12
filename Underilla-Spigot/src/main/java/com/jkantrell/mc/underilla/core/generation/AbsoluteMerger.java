@@ -61,11 +61,7 @@ public class AbsoluteMerger implements Merger {
             // and do not replace liquid vanilla blocks by air. (to preserve water and lava lackes)
             if (((v.y() > columnHeigth) // block over surface or close to surface are kept from custom surface world.
                     || (isCustomWorldOreOutOfVanillaCaves(customBlock, vanillaBlock)) // custom world ores are kept from custom world.
-            // No need to remove surface block since we can use datapack to have much hier caves.
-            // // vanilla sea ground are replaced by custom world blocks.
-            // || (v.y() > 30 && (vanillaBlock.isLiquid() || vanillaBlock.getName().equalsIgnoreCase("GRASS_BLOCK")
-            // || vanillaBlock.getName().equalsIgnoreCase("SAND") || vanillaBlock.getName().equalsIgnoreCase("SAND_STONE")
-            // || vanillaBlock.getName().equalsIgnoreCase("GRAVEL")))
+            // No need to remove surface block anymore since we can use datapack to have much higher caves.
             )
             // // Keep custom block if it's air to preserve custom world caves if there is any. (If vanilla block is liquid, we
             // // preserve vanilla block as we want to avoid holes in vanilla underground lakes)
@@ -99,8 +95,6 @@ public class AbsoluteMerger implements Merger {
      * @param vanillaBlock the block in vanilla world
      */
     private boolean isCustomWorldOreOutOfVanillaCaves(Block customBlock, Block vanillaBlock) {
-        // return keptReferenceWorldBlocks_.contains(customBlock.getName().toUpperCase()) && (vanillaBlock == null ||
-        // vanillaBlock.isSolid());
         return (Underilla.getUnderillaConfig().isMaterialInSet(SetMaterialKeys.BLOCK_TO_KEEP_FROM_SURFACE_WORLD_IN_CAVES,
                 Material.getMaterial(customBlock.getName().toUpperCase())) && (vanillaBlock == null || vanillaBlock.isSolid()));
     }

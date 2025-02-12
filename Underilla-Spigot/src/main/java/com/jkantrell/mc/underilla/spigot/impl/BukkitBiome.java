@@ -3,7 +3,6 @@ package com.jkantrell.mc.underilla.spigot.impl;
 import fr.formiko.mc.biomeutils.NMSBiomeUtils;
 import org.bukkit.NamespacedKey;
 import com.jkantrell.mc.underilla.core.api.Biome;
-import net.minecraft.core.Holder;
 
 public class BukkitBiome implements Biome {
 
@@ -13,18 +12,15 @@ public class BukkitBiome implements Biome {
     private String name;
 
 
-    // // CONSTRUCTORS
+    // CONSTRUCTORS
     public BukkitBiome(String name) { this.name = NMSBiomeUtils.normalizeBiomeName(name); }
+    public BukkitBiome(NamespacedKey key) { this(key.toString()); }
 
 
     // GETTERS
     public org.bukkit.block.Biome getBiome() {
         return io.papermc.paper.registry.RegistryAccess.registryAccess().getRegistry(io.papermc.paper.registry.RegistryKey.BIOME)
                 .get(NamespacedKey.fromString(name));
-    }
-    public net.minecraft.world.level.biome.Biome getBiomeNMS() { return NMSBiomeUtils.getBiome(this.name); }
-    public Holder<net.minecraft.world.level.biome.Biome> getBiomeHolder() {
-        return NMSBiomeUtils.getBiomeRegistry().wrapAsHolder(getBiomeNMS());
     }
 
 

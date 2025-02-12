@@ -23,20 +23,21 @@ public class Generator {
 
     // FIELDS
     private final WorldReader worldSurfaceReader;
-    private final Merger merger_;
+    private final Merger merger;
     public static Map<String, Long> times;
 
     // CONSTRUCTORS
     public Generator(WorldReader worldSurfaceReader) {
         this.worldSurfaceReader = worldSurfaceReader;
-        // this.merger_ = switch (config_.mergeStrategy) {
-        // case SURFACE, ABSOLUTE, NONE -> new AbsoluteMerger(worldSurfaceReader);
-        // };
-        this.merger_ = new AbsoluteMerger(worldSurfaceReader);
+        // No matter what strategy is used, the AbsoluteMerger is always used to merge the land.
+        // ABSOLUTE strategy is used in the surface y level function only.
+        // NONE stategy is used in
+        this.merger = new AbsoluteMerger(worldSurfaceReader);
         times = new HashMap<>();
     }
 
     // TODO fix issue with short grass making village houses 1 block higher
+    // (Not an issue for custom map without grass on it or grass removed at the world generation)
     public int getBaseHeight(WorldInfo worldInfo, int x, int z, HeightMapType heightMap) {
         int chunkX = MCAUtil.blockToChunk(x), chunkZ = MCAUtil.blockToChunk(z);
         ChunkReader chunkReader = this.worldSurfaceReader.readChunk(chunkX, chunkZ).orElse(null);
@@ -63,7 +64,7 @@ public class Generator {
     }
 
     public void generateSurface(@Nonnull ChunkReader reader, @Nonnull ChunkData chunkData, @Nullable ChunkReader cavesReader) {
-        this.merger_.mergeLand(reader, chunkData, cavesReader);
+        this.merger.mergeLand(reader, chunkData, cavesReader);
     }
 
     public void reInsertLiquidsOverWorldSurface(WorldReader worldReader, ChunkData chunkData) {

@@ -13,18 +13,21 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.generator.structure.Structure;
 import com.jkantrell.mc.underilla.core.generation.MergeStrategy;
 import com.jkantrell.mc.underilla.spigot.Underilla;
 import com.jkantrell.mc.underilla.spigot.selector.Selector;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 
 public class UnderillaConfig {
     private final EnumMap<BooleanKeys, Boolean> booleanMap;
     private final EnumMap<IntegerKeys, Integer> integerMap;
     private final EnumMap<StringKeys, String> stringMap;
-    // private final EnumMap<SetStringKeys, Set<String>> listStringMap;
+    private final EnumMap<SetStringKeys, Set<String>> listStringMap;
     private final EnumMap<SetBiomeStringKeys, Set<String>> listBiomeStringMap;
     private final EnumMap<SetMaterialKeys, Set<Material>> listMaterialMap;
     private final EnumMap<MapMaterialKeys, Map<Material, Material>> listMapMaterialMap;
@@ -37,7 +40,7 @@ public class UnderillaConfig {
         booleanMap = new EnumMap<>(BooleanKeys.class);
         integerMap = new EnumMap<>(IntegerKeys.class);
         stringMap = new EnumMap<>(StringKeys.class);
-        // listStringMap = new EnumMap<>(SetStringKeys.class);
+        listStringMap = new EnumMap<>(SetStringKeys.class);
         listBiomeStringMap = new EnumMap<>(SetBiomeStringKeys.class);
         listMaterialMap = new EnumMap<>(SetMaterialKeys.class);
         listMapMaterialMap = new EnumMap<>(MapMaterialKeys.class);
@@ -49,13 +52,13 @@ public class UnderillaConfig {
     public boolean getBoolean(BooleanKeys key) { return booleanMap.get(key); }
     public int getInt(IntegerKeys key) { return integerMap.get(key); }
     public String getString(StringKeys key) { return stringMap.get(key); }
-    // public Set<String> getSetString(SetStringKeys key) { return listStringMap.get(key); }
+    public Set<String> getSetString(SetStringKeys key) { return listStringMap.get(key); }
     public Set<String> getSetBiomeString(SetBiomeStringKeys key) { return listBiomeStringMap.get(key); }
     public Set<Material> getSetMaterial(SetMaterialKeys key) { return listMaterialMap.get(key); }
     public Map<Material, Material> getMapMaterial(MapMaterialKeys key) { return listMapMaterialMap.get(key); }
     public Set<Structure> getSetStructure(SetStructureKeys key) { return listStructureMap.get(key); }
     public Set<EntityType> getSetEntityType(SetEntityTypeKeys key) { return listEntityTypeMap.get(key); }
-    // public boolean isStringInSet(SetStringKeys key, String value) { return getSetString(key).contains(value); }
+    public boolean isStringInSet(SetStringKeys key, String value) { return getSetString(key).contains(value); }
     public boolean isBiomeInSet(SetBiomeStringKeys key, String biome) { return getSetBiomeString(key).contains(biome); }
     public boolean isMaterialInSet(SetMaterialKeys key, Material material) { return getSetMaterial(key).contains(material); }
     public @Nullable Material getMaterialFromMap(MapMaterialKeys key, Material material) {
@@ -83,7 +86,7 @@ public class UnderillaConfig {
         booleanMap.clear();
         for (BooleanKeys key : BooleanKeys.values()) {
             if (!fileConfiguration.contains(key.path)) {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
             }
             booleanMap.put(key, fileConfiguration.getBoolean(key.path, key.defaultValue));
         }
@@ -91,7 +94,7 @@ public class UnderillaConfig {
         integerMap.clear();
         for (IntegerKeys key : IntegerKeys.values()) {
             if (!fileConfiguration.contains(key.path)) {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
             }
             int value = fileConfiguration.getInt(key.path, key.defaultValue);
             if (value > key.max) {
@@ -109,21 +112,21 @@ public class UnderillaConfig {
         stringMap.clear();
         for (StringKeys key : StringKeys.values()) {
             if (!fileConfiguration.contains(key.path)) {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
             }
             stringMap.put(key, fileConfiguration.getString(key.path, key.defaultValue));
         }
         mergeStrategy = MergeStrategy.valueOf(getString(StringKeys.STRATEGY));
 
-        // listStringMap.clear();
-        // for (SetStringKeys key : SetStringKeys.values()) {
-        // if (fileConfiguration.contains(key.path)) {
-        // listStringMap.put(key, new HashSet<>(fileConfiguration.getStringList(key.path)));
-        // } else {
-        // Underilla.warning("Key " + key + " not found in config");
-        // listStringMap.put(key, key.defaultValue);
-        // }
-        // }
+        listStringMap.clear();
+        for (SetStringKeys key : SetStringKeys.values()) {
+            if (fileConfiguration.contains(key.path)) {
+                listStringMap.put(key, new HashSet<>(fileConfiguration.getStringList(key.path)));
+            } else {
+                warnKeyMissing(key);
+                listStringMap.put(key, key.defaultValue);
+            }
+        }
 
         listMaterialMap.clear();
         for (SetMaterialKeys key : SetMaterialKeys.values()) {
@@ -131,7 +134,7 @@ public class UnderillaConfig {
             if (fileConfiguration.contains(key.path)) {
                 regexList.addAll(fileConfiguration.getStringList(key.path));
             } else {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
                 regexList.addAll(key.defaultValue);
             }
             Set<Material> materialSet = Arrays.stream(Material.values())
@@ -201,7 +204,7 @@ public class UnderillaConfig {
             if (fileConfiguration.contains(key.path)) {
                 regexList.addAll(fileConfiguration.getStringList(key.path));
             } else {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
                 regexList.addAll(key.defaultValue);
             }
             Set<EntityType> entityTypeSet = Arrays.stream(EntityType.values())
@@ -229,7 +232,7 @@ public class UnderillaConfig {
                     map.put(material, valueMaterial);
                 });
             } else {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
                 map.putAll(key.defaultValue);
             }
             listMapMaterialMap.put(key, map);
@@ -244,7 +247,7 @@ public class UnderillaConfig {
             if (fileConfiguration.contains(key.path)) {
                 biomesOrTags.addAll(fileConfiguration.getStringList(key.path));
             } else {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
                 biomesOrTags.addAll(key.defaultValue);
             }
             biomesOrTags = NMSBiomeUtils.normalizeBiomeNameList(biomesOrTags);
@@ -291,21 +294,20 @@ public class UnderillaConfig {
     }
 
     private void initSetStructures(FileConfiguration fileConfiguration) {
-        List<Structure> allStructures = io.papermc.paper.registry.RegistryAccess.registryAccess()
-                .getRegistry(io.papermc.paper.registry.RegistryKey.STRUCTURE).stream().toList();
+        Registry<Structure> structureRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.STRUCTURE);
+        List<Structure> allStructures = structureRegistry.stream().toList();
         for (SetStructureKeys key : SetStructureKeys.values()) {
             List<String> regexList = new ArrayList<>();
             if (fileConfiguration.contains(key.path)) {
                 regexList.addAll(fileConfiguration.getStringList(key.path));
             } else {
-                Underilla.warning("Key " + key + " not found in config");
+                warnKeyMissing(key);
                 regexList.addAll(key.defaultValue);
             }
 
-            Set<Structure> structureSet = allStructures.stream()
-                    .filter(structure -> regexList.stream().anyMatch(s -> structure.key().toString()
-                            // Not biomes but normalizeBiomeName does exacly what we want.
-                            .matches(NMSBiomeUtils.normalizeBiomeName(s))))
+            Set<Structure> structureSet = allStructures.stream().filter(structure -> regexList.stream().anyMatch(
+                    // Not biomes but normalizeBiomeName does exactly what we want.
+                    s -> structureRegistry.getKeyOrThrow(structure).asString().matches(NMSBiomeUtils.normalizeBiomeName(s))))
                     .collect(Collectors.toSet());
             listStructureMap.put(key, structureSet);
         }
@@ -334,15 +336,18 @@ public class UnderillaConfig {
         return "UnderillaConfig{" + "booleanMap=" + booleanMap + "\nintegerMap=" + integerMap + "\nstringMap=" + stringMap
         // + "\nlistStringMap=" + toString(listStringMap)
                 + "\nlistBiomeStringMap=" + toString(listBiomeStringMap) + "\nlistMaterialMap=" + toString(listMaterialMap)
-                + "\nlistMapMaterialMap=" + listMapMaterialMap + "\nlistStructureMap="
-                + listStructureMap.entrySet().stream()
-                        .map(e -> e.getKey() + " (" + e.getValue().size() + ") = "
-                                + e.getValue().stream().map(s -> s.getKey().asString()).sorted().toList())
-                        .collect(Collectors.joining(",\n", "{", "}"))
-                + "\nmergeStrategy=" + mergeStrategy + '}';
+                + "\nlistMapMaterialMap=" + listMapMaterialMap + "\nlistStructureMap=" + listStructureMapToString() + "\nmergeStrategy="
+                + mergeStrategy + '}';
     }
     private String toString(Map<?, ? extends Collection<?>> map) {
         return map.entrySet().stream().map(e -> e.getKey() + " (" + e.getValue().size() + ") = " + e.getValue().stream().sorted().toList())
+                .collect(Collectors.joining(",\n", "{", "}"));
+    }
+    private String listStructureMapToString() {
+        Registry<Structure> structureRegistry = RegistryAccess.registryAccess().getRegistry(RegistryKey.STRUCTURE);
+        return listStructureMap.entrySet().stream()
+                .map(e -> e.getKey() + " (" + e.getValue().size() + ") = "
+                        + e.getValue().stream().map(s -> structureRegistry.getKeyOrThrow(s).asString()).sorted().toList())
                 .collect(Collectors.joining(",\n", "{", "}"));
     }
 
@@ -364,6 +369,8 @@ public class UnderillaConfig {
 
         listBiomeStringMap.remove(exceptOnKey);
     }
+
+    private void warnKeyMissing(Object key) { Underilla.warning("Key " + key + " not found in config"); }
 
 
     // enum keys ------------------------------------------------------------------------------------------------------
@@ -446,19 +453,19 @@ public class UnderillaConfig {
         }
         StringKeys(String path) { this(path, ""); }
     }
-    // public enum SetStringKeys {
-    //     // @formatter:off
-    //     NULL("null");
-    //     // @formatter:on
+    public enum SetStringKeys {
+        // @formatter:off
+        NULL("null");
+        // @formatter:on
 
-    // private final String path;
-    // private final Set<String> defaultValue;
-    // SetStringKeys(String path, Set<String> defaultValue) {
-    // this.path = path;
-    // this.defaultValue = defaultValue;
-    // }
-    // SetStringKeys(String path) { this(path, Set.of()); }
-    // }
+        private final String path;
+        private final Set<String> defaultValue;
+        SetStringKeys(String path, Set<String> defaultValue) {
+            this.path = path;
+            this.defaultValue = defaultValue;
+        }
+        SetStringKeys(String path) { this(path, Set.of()); }
+    }
     public enum SetBiomeStringKeys {
         // @formatter:off
         TRANSFERED_CAVES_WORLD_BIOMES("transferedCavesWorldBiomes", Set.of("minecraft:deep_dark", "minecraft:dripstone_caves", "minecraft:lush_caves")),

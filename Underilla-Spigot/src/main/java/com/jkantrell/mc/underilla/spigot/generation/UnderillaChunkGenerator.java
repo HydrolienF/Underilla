@@ -1,6 +1,5 @@
 package com.jkantrell.mc.underilla.spigot.generation;
 
-import fr.formiko.mc.biomeutils.NMSBiomeUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -43,7 +42,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
 
 
     // FIELDS
-    private final Generator delegate_;
+    private final Generator delegate;
     private final @Nonnull com.jkantrell.mc.underilla.core.reader.WorldReader worldSurfaceReader;
     private final @Nullable com.jkantrell.mc.underilla.core.reader.WorldReader worldCavesReader;
     private static CustomBiomeSource customBiomeSource;
@@ -56,7 +55,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
         this.worldSurfaceReader = worldSurfaceReader;
         this.worldCavesReader = worldCavesReader;
         this.outOfTheSurfaceWorldGenerator = outOfTheSurfaceWorldGenerator;
-        this.delegate_ = new Generator(worldSurfaceReader);
+        this.delegate = new Generator(worldSurfaceReader);
     }
 
 
@@ -64,12 +63,9 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
     @Override
     public int getBaseHeight(WorldInfo worldInfo, Random random, int x, int z, HeightMap heightMap) {
         // Do not use base height from VoidWorldGenerator if it is outside of the surface world, else it broke structures generation.
-        // if (outOfTheSurfaceWorldGenerator != null && isOutsideOfTheSurfaceWorld(x, z)) {
-        // return outOfTheSurfaceWorldGenerator.getBaseHeight(worldInfo, random, x, z, heightMap);
-        // }
-
+        // We only use UnderillaChunkGenerator base height to avoid a bug with the structure generation height.
         BukkitWorldInfo info = new BukkitWorldInfo(worldInfo);
-        return this.delegate_.getBaseHeight(info, x, z, HEIGHTMAPS_MAP.get(heightMap));
+        return this.delegate.getBaseHeight(info, x, z, HEIGHTMAPS_MAP.get(heightMap));
     }
 
     @Override
@@ -116,18 +112,18 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
         if (this.worldCavesReader != null && Underilla.getUnderillaConfig().getBoolean(BooleanKeys.TRANSFER_BLOCKS_FROM_CAVES_WORLD)) {
             cavesReader = this.worldCavesReader.readChunk(chunkX, chunkZ).orElse(null);
         }
-        this.delegate_.generateSurface(reader.get(), data, cavesReader);
+        this.delegate.generateSurface(reader.get(), data, cavesReader);
     }
     private static String getBiomeKeyStringFromChunkCoordinates(@NotNull WorldInfo worldInfo, int chunkX, int chunkZ) {
-        return NMSBiomeUtils.getBiomeKeyString(chunkX * Underilla.CHUNK_SIZE, 0, chunkZ * Underilla.CHUNK_SIZE,
-                Bukkit.getWorld(worldInfo.getUID()));
+        return Bukkit.getWorld(worldInfo.getUID()).getBiome(chunkX * Underilla.CHUNK_SIZE, 0, chunkZ * Underilla.CHUNK_SIZE).getKey()
+                .asString();
     }
 
 
     @Override
     public List<BlockPopulator> getDefaultPopulators(World world) {
         // Caves are vanilla generated, but they are carved underwater, this re-places the water blocks in case they were carved into.
-        return List.of(new Populator(this.worldSurfaceReader, this.delegate_));
+        return List.of(new Populator(this.worldSurfaceReader, this.delegate));
     }
 
     @Override
@@ -137,7 +133,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
             return outOfTheSurfaceWorldGenerator.shouldGenerateNoise(worldInfo, random, chunkX, chunkZ);
         }
 
-        return this.delegate_.shouldGenerateNoise(chunkX, chunkZ);
+        return this.delegate.shouldGenerateNoise(chunkX, chunkZ);
     }
 
 
@@ -149,7 +145,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
         }
 
         // Must always return true, bedrock and deepslate layers are generated in this step
-        return this.delegate_.shouldGenerateSurface(chunkX, chunkZ);
+        return this.delegate.shouldGenerateSurface(chunkX, chunkZ);
     }
 
 
@@ -174,7 +170,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
             return outOfTheSurfaceWorldGenerator.shouldGenerateDecorations(worldInfo, random, chunkX, chunkZ);
         }
 
-        return this.delegate_.shouldGenerateDecorations(chunkX, chunkZ);
+        return this.delegate.shouldGenerateDecorations(chunkX, chunkZ);
     }
 
     @Override
@@ -184,7 +180,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
             return outOfTheSurfaceWorldGenerator.shouldGenerateMobs(worldInfo, random, chunkX, chunkZ);
         }
 
-        return this.delegate_.shouldGenerateMobs(chunkX, chunkZ);
+        return this.delegate.shouldGenerateMobs(chunkX, chunkZ);
     }
 
     @Override
@@ -194,7 +190,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
             return outOfTheSurfaceWorldGenerator.shouldGenerateStructures(worldInfo, random, chunkX, chunkZ);
         }
 
-        return this.delegate_.shouldGenerateStructures(chunkX, chunkZ);
+        return this.delegate.shouldGenerateStructures(chunkX, chunkZ);
     }
 
     @Override

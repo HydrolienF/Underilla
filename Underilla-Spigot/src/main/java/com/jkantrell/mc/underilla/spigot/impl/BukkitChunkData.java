@@ -1,29 +1,17 @@
 package com.jkantrell.mc.underilla.spigot.impl;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
-import org.bukkit.craftbukkit.CraftWorld;
 import com.jkantrell.mc.underilla.core.api.Block;
 import com.jkantrell.mc.underilla.core.api.ChunkData;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 
 public class BukkitChunkData implements ChunkData {
 
     // FIELDS
-    // private CraftChunkData internal_;
     private org.bukkit.generator.ChunkGenerator.ChunkData chunkData;
-    // private static final Map<Biome, Holder.Reference<net.minecraft.world.level.biome.Biome>> biomeCache = new HashMap<>();
-    private static final World world = Bukkit.getWorld("world");
 
 
     // CONSTRUCTORS
-    // public BukkitChunkData(CraftChunkData delegate) { this.internal_ = delegate; }
-    public BukkitChunkData(org.bukkit.generator.ChunkGenerator.ChunkData chunkData) {
-        // internal_ = (CraftChunkData) chunkData;
-        this.chunkData = chunkData;
-    }
+    public BukkitChunkData(org.bukkit.generator.ChunkGenerator.ChunkData chunkData) { this.chunkData = chunkData; }
 
 
     @Override
@@ -44,13 +32,7 @@ public class BukkitChunkData implements ChunkData {
 
     @Override
     public com.jkantrell.mc.underilla.core.api.Biome getBiome(int x, int y, int z) {
-        // Biome b = this.chunkData.getBiome(x, y, z);
-        // return new BukkitBiome(b);
-        // get net.minecraft.world.level.biome.Biome from x, y, z
-        Holder<net.minecraft.world.level.biome.Biome> nmsBiome = ((CraftWorld) world).getHandle().getBiome(new BlockPos(x, y, z));
-        // System.out.println(nmsBiome);
-        return new BukkitBiome(nmsBiome.getRegisteredName());
-
+        return new BukkitBiome(this.chunkData.getBiome(x, y, z).getKey());
     }
 
     @Override

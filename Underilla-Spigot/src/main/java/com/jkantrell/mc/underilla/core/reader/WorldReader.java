@@ -229,7 +229,7 @@ public abstract class WorldReader implements Reader {
 
 
         // UTIL
-        // We synchronized the methode to avoid concurrent access to the cache.
+        // We synchronized the methods to avoid concurrent access to the cache.
         // Concurrent access cause queue_ and map_ to grow without never being reduced.
         // We might win few ms by reducing the part of the code that is synchronized, but I don't think it's worth the potential bugs.
         T get(int x, int z) {
