@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import com.jkantrell.mc.underilla.core.api.Biome;
 import com.jkantrell.mc.underilla.core.api.Block;
+import com.jkantrell.mc.underilla.core.generation.MergeStrategy;
 import com.jkantrell.mc.underilla.spigot.Underilla;
 import com.jkantrell.mc.underilla.spigot.impl.BukkitBlock;
 import com.jkantrell.mc.underilla.spigot.io.Tools;
@@ -101,6 +102,9 @@ public abstract class WorldReader implements Reader {
     }
 
     public int getLowerBlockOfSurfaceWorldYLevel(int globalX, int globalZ) {
+        if (Underilla.getUnderillaConfig().getMergeStrategy() == MergeStrategy.ABSOLUTE) {
+            return Underilla.getUnderillaConfig().getInt(IntegerKeys.MAX_HEIGHT_OF_CAVES);
+        }
         Integer cached = yLevelCache_.get(globalX, globalZ);
         if (cached != null) {
             return cached;
