@@ -102,9 +102,12 @@ public abstract class WorldReader implements Reader {
     }
 
     public int getLowerBlockOfSurfaceWorldYLevel(int globalX, int globalZ) {
-        if (Underilla.getUnderillaConfig().getMergeStrategy() == MergeStrategy.ABSOLUTE) {
+        // Hard limit for NONE & ABSOLUTE merge strategy.
+        if (Underilla.getUnderillaConfig().getMergeStrategy() == MergeStrategy.ABSOLUTE
+                || Underilla.getUnderillaConfig().getMergeStrategy() == MergeStrategy.NONE) {
             return Underilla.getUnderillaConfig().getInt(IntegerKeys.MAX_HEIGHT_OF_CAVES);
         }
+        // Computed limit for SURFACE merge startegy.
         Integer cached = yLevelCache_.get(globalX, globalZ);
         if (cached != null) {
             return cached;
