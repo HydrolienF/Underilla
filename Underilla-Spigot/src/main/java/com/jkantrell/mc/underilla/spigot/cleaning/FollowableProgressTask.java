@@ -18,7 +18,7 @@ public abstract class FollowableProgressTask {
         this.tasksCount = tasksCount;
         this.selector = selector;
         printTime = 0;
-        printTimeEachXMs = 1000 * Underilla.getUnderillaConfig().getInt(IntegerKeys.PRINT_PROGRESS_EVERY_X_SECONDS);
+        printTimeEachXMs = Underilla.MS_PER_SECOND * Underilla.getUnderillaConfig().getInt(IntegerKeys.PRINT_PROGRESS_EVERY_X_SECONDS);
         stop = false;
     }
     public FollowableProgressTask(int taskID, int tasksCount) { this(taskID, tasksCount, Underilla.getUnderillaConfig().getSelector()); }

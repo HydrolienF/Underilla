@@ -36,6 +36,7 @@ public final class Underilla extends JavaPlugin {
     public static final int CHUNK_SIZE = 16;
     public static final int REGION_SIZE = 512;
     public static final int BIOME_AREA_SIZE = 4;
+    public static final long MS_PER_SECOND = 1000;
     private CleanBlocksTask cleanBlocksTask;
     private CleanEntitiesTask cleanEntitiesTask;
     private StructureEventListener structureEventListener;
@@ -233,7 +234,8 @@ public final class Underilla extends JavaPlugin {
 
         chunky.getApi().onGenerationProgress(new Consumer<GenerationProgressEvent>() {
             long printTime = 0;
-            long printTimeEachXMs = 1000 * Underilla.getUnderillaConfig().getInt(IntegerKeys.PRINT_PROGRESS_EVERY_X_SECONDS);
+            long printTimeEachXMs = Underilla.MS_PER_SECOND
+                    * Underilla.getUnderillaConfig().getInt(IntegerKeys.PRINT_PROGRESS_EVERY_X_SECONDS);
             @Override
             public void accept(GenerationProgressEvent generationProgressEvent) {
                 if (printTime + printTimeEachXMs < System.currentTimeMillis()) {

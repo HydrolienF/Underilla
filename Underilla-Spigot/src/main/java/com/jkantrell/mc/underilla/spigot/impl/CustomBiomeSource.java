@@ -129,21 +129,21 @@ public class CustomBiomeSource {
 
     private synchronized void debug(String message) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastInfoPrinted > 1000) {
+        if (currentTime - lastInfoPrinted > Underilla.MS_PER_SECOND) {
             Underilla.debug(message);
             lastInfoPrinted = currentTime;
         }
     }
     private synchronized void info(String message) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastInfoPrinted > 1000) {
+        if (currentTime - lastInfoPrinted > Underilla.MS_PER_SECOND) {
             Underilla.info(message);
             lastInfoPrinted = currentTime;
         }
     }
     private synchronized void warning(String message) {
         long currentTime = System.currentTimeMillis();
-        if (currentTime - lastWarnningPrinted > 1000) {
+        if (currentTime - lastWarnningPrinted > Underilla.MS_PER_SECOND) {
             Underilla.warning(message);
             lastWarnningPrinted = currentTime;
         }
