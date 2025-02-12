@@ -59,7 +59,7 @@ public class CustomBiomeSource {
         if (vanillaBiomeSource != null && surfaceWorldBiomeName != null && !Underilla.getUnderillaConfig()
                 .isBiomeInSet(SetBiomeStringKeys.SURFACE_WORLD_ONLY_ON_THIS_BIOMES, surfaceWorldBiomeName)) {
             Biome vanillaBiome = vanillaBiomeSource.getBiome(worldInfo, x, y, z);
-            String vanillaBiomeName = vanillaBiome == null ? "null" : vanillaBiome.getKey().asString();
+            String vanillaBiomeName = vanillaBiome.getKey().asString();
             // info("Currently tested vanillaBiome: " + vanillaBiomeName + " at " + x + " " + y + " " + z);
             // If is a cave biome that we should preserve & is below the surface of surface world.
             if (vanillaBiomeName != null && Underilla.getUnderillaConfig()

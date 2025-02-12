@@ -14,6 +14,7 @@ import com.jkantrell.mc.underilla.core.reader.ChunkReader;
 import com.jkantrell.mc.underilla.core.reader.WorldReader;
 import com.jkantrell.mc.underilla.core.vector.LocatedBlock;
 import com.jkantrell.mc.underilla.spigot.Underilla;
+import com.jkantrell.mc.underilla.spigot.impl.BukkitBlock;
 import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.BooleanKeys;
 import com.jkantrell.mca.MCAUtil;
 
@@ -50,43 +51,41 @@ public class Generator {
             case MOTION_BLOCKING_NO_LEAVES -> b -> (!b.isSolid() || b.getName().toLowerCase().contains("leaves"));
         };
         int y = chunkReader.airSectionsBottom();
-        Block b, airBlock = chunkReader.blockFromTag(MCAUtil.airBlockTag()).get();
+        Block b;
         do {
             y--;
             if (y < worldInfo.getMinHeight()) {
                 break;
             }
-            b = chunkReader.blockAt(Math.floorMod(x, 16), y, Math.floorMod(z, 16)).orElse(airBlock);
+            b = chunkReader.blockAt(Math.floorMod(x, 16), y, Math.floorMod(z, 16)).orElse(BukkitBlock.AIR);
         } while (check.test(b));
         return y + 1;
     }
 
     public void generateSurface(@Nonnull ChunkReader reader, @Nonnull ChunkData chunkData, @Nullable ChunkReader cavesReader) {
         this.merger_.mergeLand(reader, chunkData, cavesReader);
-        // The only configuration where we need to merge biome here is when we want to transfer biomes from the reference world
-        // & keep underground biomes.
-        // if (config_.needToMixBiomes()) {
-        // long time = System.currentTimeMillis();
-        // this.merger_.mergeBiomes(reader, chunkData);
-        // addTime("mergeBiomes", time);
-        // }
     }
 
     public void reInsertLiquidsOverWorldSurface(WorldReader worldReader, ChunkData chunkData) {
         ChunkReader reader = worldReader.readChunk(chunkData.getChunkX(), chunkData.getChunkZ()).orElse(null);
-        // Getting watter and lava blocks in the chunk
-        // Filter blocks that are not over the surface
-        List<LocatedBlock> locations = reader.locationsOf(Block::isLiquid).stream()
-                .filter(l -> l.y() > worldReader.getLowerBlockOfSurfaceWorldYLevel(chunkData.getChunkX() * Underilla.CHUNK_SIZE + l.x(),
-                        chunkData.getChunkZ() * Underilla.CHUNK_SIZE + l.z()))
-                .toList();
+        if (reader == null) {
+            Underilla.warning(() -> String.format("No reader found for chunk %d, %d. Skipping liquid reinsertion.", chunkData.getChunkX(),
+                    chunkData.getChunkZ()));
+        } else {
+            // Getting watter and lava blocks in the chunk
+            // Filter blocks that are not over the surface
+            List<LocatedBlock> locations = reader.locationsOf(Block::isLiquid).stream()
+                    .filter(l -> l.y() > worldReader.getLowerBlockOfSurfaceWorldYLevel(chunkData.getChunkX() * Underilla.CHUNK_SIZE + l.x(),
+                            chunkData.getChunkZ() * Underilla.CHUNK_SIZE + l.z()))
+                    .toList();
 
-        // Placing them back
-        locations.forEach(l -> {
-            Block b = chunkData.getBlock(l.vector());
-            b.waterlog();
-            chunkData.setBlock(l.vector(), b);
-        });
+            // Placing them back
+            locations.forEach(l -> {
+                Block b = chunkData.getBlock(l.vector());
+                b.waterlog();
+                chunkData.setBlock(l.vector(), b);
+            });
+        }
     }
 
     public boolean shouldGenerateNoise(int chunkX, int chunkZ) {

@@ -153,6 +153,7 @@ sonar {
     properties {
         property("sonar.organization", "mvndicraft")
         property("sonar.projectKey", project.name)
-        property("sonar.host.url", "https://sonarcloud.io/")
+        //property("sonar.host.url", "https://sonarcloud.io/")
+        property("sonar.host.url", "http://mvndi.formiko.fr:9000/")
     }
 }

@@ -44,6 +44,8 @@ public class BukkitBiome implements Biome {
         }
         return this.name.equals(bukkitBiome.name);
     }
+    @Override
+    public int hashCode() { return name.hashCode(); }
 
     @Override
     public String toString() { return "BukkitBiome{" + name + '}'; }
