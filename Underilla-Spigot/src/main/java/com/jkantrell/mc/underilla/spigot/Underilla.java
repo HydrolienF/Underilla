@@ -19,6 +19,7 @@ import com.jkantrell.mc.underilla.spigot.cleaning.FollowableProgressTask;
 import com.jkantrell.mc.underilla.spigot.generation.GeneratorAccessor;
 import com.jkantrell.mc.underilla.spigot.generation.UnderillaChunkGenerator;
 import com.jkantrell.mc.underilla.spigot.impl.BukkitWorldReader;
+import com.jkantrell.mc.underilla.spigot.io.Tools;
 import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig;
 import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.BooleanKeys;
 import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.IntegerKeys;
@@ -45,18 +46,15 @@ public final class Underilla extends JavaPlugin {
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         if (allStepsDone()) {
-            getLogger().info(
-                    "Use the out of the surface world generator instead of Underilla because we have done all generation & cleaning steps.");
+            info("Use the out of the surface world generator instead of Underilla because we have done all generation & cleaning steps.");
             return GeneratorAccessor.getOutOfTheSurfaceWorldGenerator(worldName, id);
         }
         if (this.worldSurfaceReader == null) {
-            getLogger()
-                    .warning("No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
+            warning("No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
             return super.getDefaultWorldGenerator(worldName, id);
         }
         ChunkGenerator outOfTheSurfaceWorldGenerator = GeneratorAccessor.getOutOfTheSurfaceWorldGenerator(worldName, id);
-        getLogger().info(
-                "Using Underilla as main world generator (with " + outOfTheSurfaceWorldGenerator + " as outOfTheSurfaceWorldGenerator)!");
+        info("Using Underilla as main world generator (with " + outOfTheSurfaceWorldGenerator + " as outOfTheSurfaceWorldGenerator)!");
         return new UnderillaChunkGenerator(this.worldSurfaceReader, this.worldCavesReader, outOfTheSurfaceWorldGenerator);
     }
 
@@ -74,22 +72,20 @@ public final class Underilla extends JavaPlugin {
             // Loading reference world
             try {
                 this.worldSurfaceReader = new BukkitWorldReader(Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME));
-                getLogger().info("World '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found.");
+                info("World '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found.");
             } catch (NoSuchFieldException e) {
-                getLogger().warning(
-                        "No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
-                e.printStackTrace();
+                warning("No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
+                warning(() -> Tools.exceptionToString(e));
             }
             // Loading caves world if we should use it.
             if (Underilla.getUnderillaConfig().getBoolean(BooleanKeys.TRANSFER_BLOCKS_FROM_CAVES_WORLD)
                     || Underilla.getUnderillaConfig().getBoolean(BooleanKeys.TRANSFER_BIOMES_FROM_CAVES_WORLD)) {
                 try {
-                    getLogger().info("Loading caves world");
+                    info("Loading caves world");
                     this.worldCavesReader = new BukkitWorldReader(Underilla.getUnderillaConfig().getString(StringKeys.CAVES_WORLD_NAME));
                 } catch (NoSuchFieldException e) {
-                    getLogger().warning(
-                            "No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.CAVES_WORLD_NAME) + "' found");
-                    e.printStackTrace();
+                    warning("No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.CAVES_WORLD_NAME) + "' found");
+                    warning(() -> Tools.exceptionToString(e));
                 }
             }
 
@@ -109,18 +105,17 @@ public final class Underilla extends JavaPlugin {
             if (Generator.times != null) {
                 long totalTime = Generator.times.entrySet().stream().mapToLong(Map.Entry::getValue).sum();
                 for (Map.Entry<String, Long> entry : Generator.times.entrySet()) {
-                    getLogger().info(entry.getKey() + " took " + entry.getValue() + "ms (" + (entry.getValue() * 100 / totalTime) + "%)");
+                    info(entry.getKey() + " took " + entry.getValue() + "ms (" + (entry.getValue() * 100 / totalTime) + "%)");
                 }
             }
             Map<String, Long> biomesPlaced = UnderillaChunkGenerator.getBiomesPlaced();
             if (biomesPlaced != null) {
-                getLogger().info("Map of biome placed: "
-                        + biomesPlaced.entrySet().stream().sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
-                                .map(entry -> entry.getKey() + ": " + entry.getValue()).reduce((a, b) -> a + ", " + b).orElse(""));
+                info("Map of biome placed: " + biomesPlaced.entrySet().stream().sorted((a, b) -> Long.compare(b.getValue(), a.getValue()))
+                        .map(entry -> entry.getKey() + ": " + entry.getValue()).reduce((a, b) -> a + ", " + b).orElse(""));
             }
         } catch (Exception e) {
-            getLogger().info("Fail to print times or biomes placed.");
-            e.printStackTrace();
+            info("Fail to print times or biomes placed.");
+            Underilla.info(() -> Tools.exceptionToString(e));
         }
     }
 

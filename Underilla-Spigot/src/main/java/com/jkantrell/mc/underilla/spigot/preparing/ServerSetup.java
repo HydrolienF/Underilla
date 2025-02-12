@@ -5,6 +5,7 @@ import java.io.File;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import com.jkantrell.mc.underilla.spigot.Underilla;
+import com.jkantrell.mc.underilla.spigot.io.Tools;
 import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.StringKeys;
 
 public class ServerSetup {
@@ -12,15 +13,16 @@ public class ServerSetup {
 
     public static boolean setupPaperWorkerthreads() {
         int cores = Runtime.getRuntime().availableProcessors();
-        Underilla.getInstance().getLogger().info("Available cores: " + cores);
-        // Underilla.getInstance().getLogger().info("config/paper-global.yml should be edit to: chunk-system.worker-threads: " + (cores - 1));
-        
+        Underilla.info("Available cores: " + cores);
+        // Underilla.info("config/paper-global.yml should be edit to: chunk-system.worker-threads: " + (cores -
+        // 1));
+
         FileConfiguration paperGlobalConfig = getPaperGlobalFileConfiguration();
         String key = "chunk-system.worker-threads";
-        if(paperGlobalConfig.getInt(key, -1) == cores - 1){
+        if (paperGlobalConfig.getInt(key, -1) == cores - 1) {
             Underilla.info("The worker threads are already set to " + (cores - 1));
             return false;
-        }else{
+        } else {
             paperGlobalConfig.set(key, cores - 1);
             Underilla.info("Set the worker threads to " + (cores - 1));
             try {
@@ -28,7 +30,7 @@ public class ServerSetup {
                 Underilla.getInstance().validateInitServerTask(StringKeys.STEP_SETUP_PAPER_FOR_QUICK_GENERATION);
             } catch (Exception e) {
                 Underilla.error("Error saving paper-global.yml");
-                e.printStackTrace();
+                Underilla.error(() -> Tools.exceptionToString(e));
                 Underilla.getInstance().validateInitServerTask(StringKeys.STEP_SETUP_PAPER_FOR_QUICK_GENERATION, false);
                 return false;
             }
@@ -50,33 +52,40 @@ public class ServerSetup {
             }
         }
 
-        Underilla.info(String.format("Downloading needed dependencies to %s VoidWorldGenerator: %s, Chunky: %s", plugins.getAbsolutePath(), shouldDownloadVoidWorldGenerator, shouldDownloadChunky));
+        Underilla.info(String.format("Downloading needed dependencies to %s VoidWorldGenerator: %s, Chunky: %s", plugins.getAbsolutePath(),
+                shouldDownloadVoidWorldGenerator, shouldDownloadChunky));
 
         if (shouldDownloadVoidWorldGenerator) {
             String voidWorldGeneratorVersion = Underilla.getInstance().getConfig().getString("voidWorldGeneratorVersion", "1.3.2");
-            error = !FLUFiles.download(String.format("https://github.com/HydrolienF/VoidWorldGenerator/releases/download/%s/VoidWorldGenerator-%s.jar", voidWorldGeneratorVersion, voidWorldGeneratorVersion),
+            error = !FLUFiles.download(
+                    String.format("https://github.com/HydrolienF/VoidWorldGenerator/releases/download/%s/VoidWorldGenerator-%s.jar",
+                            voidWorldGeneratorVersion, voidWorldGeneratorVersion),
                     String.format("%s/VoidWorldGenerator-%s.jar", plugins.getAbsolutePath(), voidWorldGeneratorVersion)) || error;
             Underilla.info("Downloaded VoidWorldGenerator " + (error ? "with" : "without") + " errors");
         }
         if (shouldDownloadChunky) {
-            String chunkyVersion = Underilla.getInstance().getConfig().getString("chunkyVersion", "1.4.28"); 
-            error = !FLUFiles.download(String.format("https://hangarcdn.papermc.io/plugins/pop4959/Chunky/versions/%s/PAPER/Chunky-Bukkit-%s.jar", chunkyVersion, chunkyVersion),
-                    String.format("%s/Chunky-%s.jar", plugins.getAbsolutePath(), chunkyVersion)) || error;
+            String chunkyVersion = Underilla.getInstance().getConfig().getString("chunkyVersion", "1.4.28");
+            error = !FLUFiles
+                    .download(
+                            String.format("https://hangarcdn.papermc.io/plugins/pop4959/Chunky/versions/%s/PAPER/Chunky-Bukkit-%s.jar",
+                                    chunkyVersion, chunkyVersion),
+                            String.format("%s/Chunky-%s.jar", plugins.getAbsolutePath(), chunkyVersion))
+                    || error;
             Underilla.info("Downloaded Chunky " + (error ? "with" : "without") + " errors");
         }
         Underilla.getInstance().validateInitServerTask(StringKeys.STEP_DOWNLOAD_DEPENDENCY_PLUGINS, !error);
         return shouldDownloadVoidWorldGenerator || shouldDownloadChunky;
     }
 
-    public static boolean setupBukkitWorldGenerator(){
+    public static boolean setupBukkitWorldGenerator() {
         // Read the bukkit.yml file
-        FileConfiguration bukkitConfig =  getBukkitFileConfiguration();
-        String key = "worlds."+Underilla.getUnderillaConfig().getString(StringKeys.FINAL_WORLD_NAME) +".generator";
+        FileConfiguration bukkitConfig = getBukkitFileConfiguration();
+        String key = "worlds." + Underilla.getUnderillaConfig().getString(StringKeys.FINAL_WORLD_NAME) + ".generator";
         String currentWorldGenerator = bukkitConfig.getString(key, "");
-        if("Underilla".equals(currentWorldGenerator)){
+        if ("Underilla".equals(currentWorldGenerator)) {
             Underilla.info("The world generator is already set to Underilla");
             return false;
-        }else{
+        } else {
             bukkitConfig.set(key, "Underilla");
             Underilla.info("Set the world generator to Underilla");
             try {
@@ -84,23 +93,17 @@ public class ServerSetup {
                 Underilla.getInstance().validateInitServerTask(StringKeys.STEP_SET_UNDERILLA_AS_WORLD_GENERATOR);
             } catch (Exception e) {
                 Underilla.error("Error saving bukkit.yml");
-                e.printStackTrace();
+                Underilla.error(() -> Tools.exceptionToString(e));
                 Underilla.getInstance().validateInitServerTask(StringKeys.STEP_SET_UNDERILLA_AS_WORLD_GENERATOR, false);
                 return false;
             }
             return true;
         }
     }
-    public static FileConfiguration getBukkitFileConfiguration(){
-        return YamlConfiguration.loadConfiguration(getBukkitFile());
-    }
-    public static File getBukkitFile(){
-        return new File(Underilla.getInstance().getServer().getWorldContainer(), "bukkit.yml");
-    }
-    public static FileConfiguration getPaperGlobalFileConfiguration(){
-        return YamlConfiguration.loadConfiguration(getPaperGlobalFile());
-    }
-    public static File getPaperGlobalFile(){
+    public static FileConfiguration getBukkitFileConfiguration() { return YamlConfiguration.loadConfiguration(getBukkitFile()); }
+    public static File getBukkitFile() { return new File(Underilla.getInstance().getServer().getWorldContainer(), "bukkit.yml"); }
+    public static FileConfiguration getPaperGlobalFileConfiguration() { return YamlConfiguration.loadConfiguration(getPaperGlobalFile()); }
+    public static File getPaperGlobalFile() {
         return new File(Underilla.getInstance().getServer().getWorldContainer(), "config/paper-global.yml");
     }
 }

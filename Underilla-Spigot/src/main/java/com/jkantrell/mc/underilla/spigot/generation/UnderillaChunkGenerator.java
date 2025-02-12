@@ -209,8 +209,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
     // Since 1.21.3 custom biomes are supported by paper.
     @Override
     public BiomeProvider getDefaultBiomeProvider(@NotNull WorldInfo worldInfo) {
-        Underilla.getInstance().getLogger()
-                .info("Underilla Use the custom biome provider from file data. Structures will be generate in the right biome.");
+        Underilla.info("Underilla Use the custom biome provider from file data. Structures will be generate in the right biome.");
         BiomeProvider outOfTheSurfaceWorldBiomeProdiver = outOfTheSurfaceWorldGenerator == null ? null
                 : outOfTheSurfaceWorldGenerator.getDefaultBiomeProvider(worldInfo);
         return new BiomeProviderFromFile(outOfTheSurfaceWorldBiomeProdiver);

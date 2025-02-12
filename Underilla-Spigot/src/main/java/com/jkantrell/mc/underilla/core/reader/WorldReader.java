@@ -16,6 +16,7 @@ import com.jkantrell.mc.underilla.core.api.Biome;
 import com.jkantrell.mc.underilla.core.api.Block;
 import com.jkantrell.mc.underilla.spigot.Underilla;
 import com.jkantrell.mc.underilla.spigot.impl.BukkitBlock;
+import com.jkantrell.mc.underilla.spigot.io.Tools;
 import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.IntegerKeys;
 import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.SetBiomeStringKeys;
 import com.jkantrell.mca.Chunk;
@@ -200,7 +201,8 @@ public abstract class WorldReader implements Reader {
             this.regionCache_.put(x, z, region);
             return region;
         } catch (Exception e) {
-            e.printStackTrace();
+            Underilla.error(() -> "Failed to read region file '" + regionFile.getPath() + "'");
+            Underilla.error(() -> Tools.exceptionToString(e));
             return null;
         }
     }

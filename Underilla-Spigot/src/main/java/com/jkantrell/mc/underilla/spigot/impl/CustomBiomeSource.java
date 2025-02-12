@@ -53,7 +53,7 @@ public class CustomBiomeSource {
         if (vanillaBiomeSource == null) {
             CraftWorld worldFinal = (CraftWorld) Bukkit.getWorld(Underilla.getUnderillaConfig().getString(StringKeys.FINAL_WORLD_NAME));
             vanillaBiomeSource = worldFinal == null ? null : worldFinal.vanillaBiomeProvider();
-            Underilla.getInstance().getLogger().info("VanillaBiomeSource was null. It is now set to " + vanillaBiomeSource);
+            Underilla.info("VanillaBiomeSource was null. It is now set to " + vanillaBiomeSource);
         }
 
         if (vanillaBiomeSource != null && surfaceWorldBiomeName != null && !Underilla.getUnderillaConfig()
@@ -106,14 +106,14 @@ public class CustomBiomeSource {
     }
 
     private boolean isUnderSurface(BukkitWorldReader worldSurfaceReader, int x, int y, int z) {
-        if(Underilla.getUnderillaConfig().getBoolean(BooleanKeys.BIOME_MERGING_FROM_CAVES_GENERATION_ONLY_UNDER_SURFACE)) {
+        if (Underilla.getUnderillaConfig().getBoolean(BooleanKeys.BIOME_MERGING_FROM_CAVES_GENERATION_ONLY_UNDER_SURFACE)) {
             // Merging biome below the surface only.
             x = x - x % 4;
             z = z - z % 4;
-            for(int i=0; i<4; i++) {
-                for(int j=0; j<4; j++) {
+            for (int i = 0; i < 4; i++) {
+                for (int j = 0; j < 4; j++) {
                     // If the block is over the merge limit, it's not under the surface.
-                    if(y >= topYOfSurfaceWorld(worldSurfaceReader, x+i, z+j)){
+                    if (y >= topYOfSurfaceWorld(worldSurfaceReader, x + i, z + j)) {
                         return false;
                     }
                 }

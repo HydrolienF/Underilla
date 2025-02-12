@@ -68,7 +68,7 @@ public class BukkitRegionChunkData implements ChunkData {
                     this.absZ_ + z) instanceof org.bukkit.block.CreatureSpawner creatureSpawner) {
                 creatureSpawner.setSpawnedType(bukkitBlock.getSpawnedType().get());
                 creatureSpawner.update();
-                Underilla.getInstance().getLogger().info("\nSet spawner type to " + bukkitBlock.getSpawnedType().get());
+                Underilla.info("\nSet spawner type to " + bukkitBlock.getSpawnedType().get());
             }
         }
     }

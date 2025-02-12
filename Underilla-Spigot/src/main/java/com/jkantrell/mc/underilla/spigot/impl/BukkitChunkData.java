@@ -80,8 +80,7 @@ public class BukkitChunkData implements ChunkData {
             // CraftBlockState blockState = (CraftBlockState) craftBlock.getState();
 
 
-            // Underilla.getInstance().getLogger()
-            // .info("setBlock: Spawner block detected at " + x + ", " + y + ", " + z + " with class " + bblock.getClass()
+            // Underilla.info("setBlock: Spawner block detected at " + x + ", " + y + ", " + z + " with class " + bblock.getClass()
             // + ", material " + bblock.getType() + ", state " + bblock.getState() + ", blockData " + bblock.getBlockData()
             // + ", blockData class " + bblock.getBlockData().getClass() + ", blockData material "
             // + bblock.getBlockData().getMaterial() + ", blockData class " + bblock.getBlockData().getClass());
@@ -93,7 +92,7 @@ public class BukkitChunkData implements ChunkData {
             // if (bblock.getState() instanceof CreatureSpawner creatureSpawner) {
             // creatureSpawner.setSpawnedType(bukkitBlock.getSpawnedType().orElse(org.bukkit.entity.EntityType.ZOMBIE));
             // // creatureSpawner.update();
-            // Underilla.getInstance().getLogger().info("setBlock: Spawner type set to " + creatureSpawner.getSpawnedType());
+            // Underilla.info("setBlock: Spawner type set to " + creatureSpawner.getSpawnedType());
             // }
         }
 
