@@ -51,7 +51,7 @@ If you are strugeling with world generation, you can ask for **help on the Disco
     6. The server stops because of eula, open `eula.txt`, set `eula=true` and restart the server.
     7. If you want to have the same cave result for each of your generatioj try, you can edit `level-seed=` in `servers.properties` to a random number.
     8. You can edit the mob spawning settings or any other server config here if you want.
-    9. You know have a vanilla ready to work server. Time to setup Underilla.
+    9. You now have a vanilla ready to work server. Time to setup Underilla.
 2. Setup Underilla
     1. Download the latest Underilla version from the [releases](https://github.com/HydrolienF/Underilla/releases).
     2. Move the downloaded jar file to `plugins/` in your server directory.
