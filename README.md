@@ -49,7 +49,7 @@ If you are strugeling with world generation, you can ask for **help on the Disco
     4. On Linux & MacOS only, give exec perms to `start.sh` by running `chmod 700 start.sh`.
     5. Start the server with `./start.sh` on Linux and MacOS or `./start.bat` on Windows.
     6. The server stops because of eula, open `eula.txt`, set `eula=true` and restart the server.
-    7. If you want to have the same cave result for each of your generatioj try, you can edit `level-seed=` in `servers.properties` to a random number.
+    7. If you want to have the same cave result for each of your generation try, you can edit `level-seed=` in `servers.properties` to a random number.
     8. You can edit the mob spawning settings or any other server config here if you want.
     9. You now have a vanilla ready to work server. Time to setup Underilla.
 2. Setup Underilla
