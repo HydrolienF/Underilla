@@ -49,9 +49,9 @@ If you are strugeling with world generation, you can ask for **help on the Disco
     4. On Linux & MacOS only, give exec perms to `start.sh` by running `chmod 700 start.sh`.
     5. Start the server with `./start.sh` on Linux and MacOS or `./start.bat` on Windows.
     6. The server stops because of eula, open `eula.txt`, set `eula=true` and restart the server.
-    7. If you want to have the same cave result for each of your generatioj try, you can edit `level-seed=` in `servers.properties` to a random number.
+    7. If you want to have the same cave result for each of your generation try, you can edit `level-seed=` in `servers.properties` to a random number.
     8. You can edit the mob spawning settings or any other server config here if you want.
-    9. You know have a vanilla ready to work server. Time to setup Underilla.
+    9. You now have a vanilla ready to work server. Time to setup Underilla.
 2. Setup Underilla
     1. Download the latest Underilla version from the [releases](https://github.com/HydrolienF/Underilla/releases).
     2. Move the downloaded jar file to `plugins/` in your server directory.
@@ -63,7 +63,8 @@ If you are strugeling with world generation, you can ask for **help on the Disco
     3. You can read the other fields of the config and edit some of them. This steps can be done later after a 1st generation try, to customize your world generation.
 5. Configure datapack
     1. If your custom world already have a datapack, you can move it to `world/datapacks/` to keep your custom biomes etc.
-    2. If you don't have a datapack yet, you should create one from [vanilla biome files](https://github.com/misode/mcmeta/tree/data) where you have remove the features you don't want. For example if your custom surface world already have trees
+    2. If you don't have a datapack yet, you should create one from [vanilla biome files](https://github.com/misode/mcmeta/tree/data) where you have remove the features you don't want. For example if your custom surface world already have trees and most important, have caves high enought for your world.
+    3. /!\ Make sure that cave will be generated under montains by having a high y level on your datapack. You can use [this basic datapack](https://github.com/HydrolienF/Underilla/tree/main/UnderillaBaseDataPack) to take care of the height or include it's files into your datapack. If you miss this step, there might be some empty space under montains in your world, but the generation will work.
 6. Start **caves generation**
     1. Run the server again, this time the eula have been accepted, so the server will start. The 1st time you start the server Underilla will download it's dependencies to your `plugins/`, configure paper for faster world generation & set Underilla as world Generator in `bukkit.yml`. This steps can be disabled in the config.
     2. If you have set a start script, the server should restart automaticaly, if not you will have to restart it manually.
