@@ -1,12 +1,12 @@
 package com.jkantrell.mc.underilla.spigot.impl;
 
-import org.bukkit.block.data.BlockData;
-import org.bukkit.generator.LimitedRegion;
 import com.jkantrell.mc.underilla.core.api.Biome;
 import com.jkantrell.mc.underilla.core.api.Block;
 import com.jkantrell.mc.underilla.core.api.ChunkData;
 import com.jkantrell.mc.underilla.core.vector.VectorIterable;
 import com.jkantrell.mc.underilla.spigot.Underilla;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.generator.LimitedRegion;
 
 
 public class BukkitRegionChunkData implements ChunkData {
@@ -72,10 +72,15 @@ public class BukkitRegionChunkData implements ChunkData {
         }
     }
     @Override
-    public void setBiome(int x, int y, int z, Biome biome) {
-        if (!(biome instanceof BukkitBiome bukkitBiome)) {
+    public void setBiome(int x, int y, int z, Biome underillaBiome) {
+        if (!(underillaBiome instanceof BukkitBiome bukkitBiome)) {
             return;
         }
-        Underilla.getUnderillaConfig().getSelector().getWorld().setBiome(this.absX_ + x, y, this.absZ_ + z, bukkitBiome.getBiome());
+        org.bukkit.block.Biome biome = bukkitBiome.getBiome();
+        // Final transformation that can be override by other plugins
+        if (Underilla.getInstance().hasEndBiomeTransformer()) {
+            biome = Underilla.getInstance().getEndBiomeTransformer().apply(biome);
+        }
+        Underilla.getUnderillaConfig().getSelector().getWorld().setBiome(this.absX_ + x, y, this.absZ_ + z, biome);
     }
 }

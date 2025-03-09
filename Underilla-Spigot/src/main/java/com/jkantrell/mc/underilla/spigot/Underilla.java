@@ -1,17 +1,5 @@
 package com.jkantrell.mc.underilla.spigot;
 
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import javax.annotation.Nullable;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.popcraft.chunky.Chunky;
-import org.popcraft.chunky.ChunkyProvider;
-import org.popcraft.chunky.api.event.task.GenerationProgressEvent;
 import com.jkantrell.mc.underilla.core.generation.Generator;
 import com.jkantrell.mc.underilla.spigot.cleaning.CleanBlocksTask;
 import com.jkantrell.mc.underilla.spigot.cleaning.CleanEntitiesTask;
@@ -28,6 +16,21 @@ import com.jkantrell.mc.underilla.spigot.listener.StructureEventListener;
 import com.jkantrell.mc.underilla.spigot.listener.WorldListener;
 import com.jkantrell.mc.underilla.spigot.preparing.ServerSetup;
 import com.jkantrell.mc.underilla.spigot.selector.Selector;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+import javax.annotation.Nullable;
+import org.bstats.bukkit.Metrics;
+import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.popcraft.chunky.Chunky;
+import org.popcraft.chunky.ChunkyProvider;
+import org.popcraft.chunky.api.event.task.GenerationProgressEvent;
 
 public final class Underilla extends JavaPlugin {
 
@@ -46,6 +49,9 @@ public final class Underilla extends JavaPlugin {
     private CleanEntitiesTask cleanEntitiesTask;
     private StructureEventListener structureEventListener;
 
+    private Function<org.bukkit.block.Biome, org.bukkit.block.Biome> endBiomeTransformer;
+    private Consumer<Block> endBlockTransformer;
+    private Consumer<Entity> endEntityTransformer;
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
@@ -213,6 +219,19 @@ public final class Underilla extends JavaPlugin {
     public void validateTask(StringKeys taskKey) { validateTask(taskKey, true); }
     public void validateInitServerTask(StringKeys taskKey) { validateInitServerTask(taskKey, true); }
     public void setToDoingTask(StringKeys taskKey) { getUnderillaConfig().saveNewValue(taskKey, DOING); }
+
+    // Custom actions -------------------------------------------------------------------------------------------------
+    public Function<org.bukkit.block.Biome, org.bukkit.block.Biome> getEndBiomeTransformer() { return endBiomeTransformer; }
+    public void setEndBiomeTransformer(Function<org.bukkit.block.Biome, org.bukkit.block.Biome> endBiomeTransformer) {
+        this.endBiomeTransformer = endBiomeTransformer;
+    }
+    public boolean hasEndBiomeTransformer() { return endBiomeTransformer != null; }
+    public Consumer<Block> getEndBlockTransformer() { return endBlockTransformer; }
+    public void setEndBlockTransformer(Consumer<Block> endBlockTransformer) { this.endBlockTransformer = endBlockTransformer; }
+    public boolean hasEndBlockTransformer() { return endBlockTransformer != null; }
+    public Consumer<Entity> getEndEntityTransformer() { return endEntityTransformer; }
+    public void setEndEntityTransformer(Consumer<Entity> endEntityTransformer) { this.endEntityTransformer = endEntityTransformer; }
+    public boolean hasEndEntityTransformer() { return endEntityTransformer != null; }
 
     // run tasks ------------------------------------------------------------------------------------------------------
     private void runChunky(boolean restart) {

@@ -1,22 +1,22 @@
 package com.jkantrell.mc.underilla.spigot.cleaning;
 
+import com.jkantrell.mc.underilla.spigot.Underilla;
+import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.BooleanKeys;
+import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.MapMaterialKeys;
+import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.StringKeys;
+import com.jkantrell.mc.underilla.spigot.selector.Selector;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.jkantrell.mc.underilla.spigot.Underilla;
-import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.BooleanKeys;
-import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.MapMaterialKeys;
-import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.StringKeys;
-import com.jkantrell.mc.underilla.spigot.selector.Selector;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.LevelReader;
 
 public class CleanBlocksTask extends FollowableProgressTask {
     private LevelReader levelReader;
@@ -66,6 +66,11 @@ public class CleanBlocksTask extends FollowableProgressTask {
                     // Check with NMS that the block is stable, else remove it.
                     if (Underilla.getUnderillaConfig().getBoolean(BooleanKeys.CLEAN_BLOCKS_REMOVE_UNSTABLE_BLOCKS)) {
                         removeUnstableBlock(currentBlock, startMaterial);
+                    }
+
+                    // Final transformation that can be override by other plugins
+                    if (Underilla.getInstance().hasEndBlockTransformer()) {
+                        Underilla.getInstance().getEndBlockTransformer().accept(currentBlock);
                     }
 
 

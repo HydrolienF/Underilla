@@ -1,5 +1,9 @@
 package com.jkantrell.mc.underilla.spigot.cleaning;
 
+import com.jkantrell.mc.underilla.spigot.Underilla;
+import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.SetEntityTypeKeys;
+import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.StringKeys;
+import com.jkantrell.mc.underilla.spigot.selector.Selector;
 import java.time.Duration;
 import java.util.EnumMap;
 import java.util.Map;
@@ -7,10 +11,6 @@ import org.bukkit.Chunk;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.jkantrell.mc.underilla.spigot.Underilla;
-import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.SetEntityTypeKeys;
-import com.jkantrell.mc.underilla.spigot.io.UnderillaConfig.StringKeys;
-import com.jkantrell.mc.underilla.spigot.selector.Selector;
 
 public class CleanEntitiesTask extends FollowableProgressTask {
     public CleanEntitiesTask(int taskID, int tasksCount) { super(taskID, tasksCount); }
@@ -32,6 +32,10 @@ public class CleanEntitiesTask extends FollowableProgressTask {
                             entity.remove();
                             removedEntity.put(entity.getType(), removedEntity.getOrDefault(entity.getType(), 0l) + 1);
                         } else {
+                            // Final transformation that can be override by other plugins
+                            if (Underilla.getInstance().hasEndEntityTransformer()) {
+                                Underilla.getInstance().getEndEntityTransformer().accept(entity);
+                            }
                             finalEntity.put(entity.getType(), finalEntity.getOrDefault(entity.getType(), 0l) + 1);
                         }
                     }
