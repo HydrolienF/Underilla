@@ -1,6 +1,6 @@
-# 2.1.0
+# 2.1.1
 - Add functions to edit biomes, blocks or entities at the end of the world generation.
-- Publish to maven central gradle config
+- Publish to maven central gradle config (Change the group for that & remove Underilla-Spigot directory).
 
 # 2.0.13
 - Performance improvement for NONE strategy.

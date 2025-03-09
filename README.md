@@ -58,7 +58,7 @@ If you are strugeling with world generation, you can ask for **help on the Disco
 3. Setup your custom world
     1. copy your custom world to `world_surface` in your server directory. (Only the `region/` sub directory of your world matters.)
 4. Configure Underilla
-    1. Copy the config from [this file](https://github.com/HydrolienF/Underilla/blob/main/Underilla-Spigot/src/main/resources/config.yml) and save it as config.yml in `plugins/Underilla/`. The default config can also be initialized by running underilla, but copying it from the repo ensure that Underilla config is configured before Underilla starts.
+    1. Copy the config from [this file](https://github.com/HydrolienF/Underilla/blob/main/src/main/resources/config.yml) and save it as config.yml in `plugins/Underilla/`. The default config can also be initialized by running underilla, but copying it from the repo ensure that Underilla config is configured before Underilla starts.
     2. Edit `generationArea` inside `plugins/Underilla/config.yml` to match your surface world size. If you just want to test Underilla for a 1st generation, you can keep default values.
     3. You can read the other fields of the config and edit some of them. This steps can be done later after a 1st generation try, to customize your world generation.
 5. Configure datapack
@@ -120,10 +120,12 @@ Create a working jar with `./gradlew assemble`.
 
 Run a local paper server with the example map & datapack on Linux.
 ```sh
-rm Underilla-Spigot/run/world_surface/ -fr; cp testMap/world/ Underilla-Spigot/run/world_surface/; rm -fr Underilla-Spigot/run/world/; mkdir -p Underilla-Spigot/run/world/datapacks; cp UnderillaBaseDataPack/ Underilla-Spigot/run/world/datapacks; ./gradlew runServer
+rm run/world_surface/ -fr; cp testMap/world/ run/world_surface/; rm -fr run/world/; mkdir -p run/world/datapacks; cp UnderillaBaseDataPack/ run/world/datapacks; ./gradlew runServer
 ```
 
-Feature requests or pull requests are welcome. Concider create an issue 1st to talk about your new feature before sending a pull request.
+Build for publication with `./gradlew clean zipStagingDeploy`
+
+Feature requests or pull requests are welcome. Concider creating an issue first to talk about your new feature before sending a pull request.
 
 ## Thanks
 

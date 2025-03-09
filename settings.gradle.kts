@@ -4,4 +4,3 @@ plugins {
 }
 
 rootProject.name = "Underilla"
-include("Underilla-Spigot")

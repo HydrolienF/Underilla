@@ -73,7 +73,7 @@ jobs:
         with:
           allowUpdates: true
           updateOnlyUnreleased: true
-          artifacts: Underilla-Spigot/build/libs/Underilla-Spigot-${{ steps.version.outputs.version }}.jar
+          artifacts: build/libs/Underilla-${{ steps.version.outputs.version }}.jar
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.version.outputs.version }}
           name: ${{ steps.version.outputs.releaseName }}
