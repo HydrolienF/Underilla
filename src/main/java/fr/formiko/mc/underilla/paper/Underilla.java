@@ -56,6 +56,8 @@ public final class Underilla extends JavaPlugin {
     private Consumer<Entity> endEntityTransformer;
     private Map<StringKeys, Runnable> endTaskActions = new EnumMap<>(StringKeys.class);
 
+    public Underilla() { instance = this; }
+
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         if (allStepsDone()) {
