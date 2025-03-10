@@ -1,3 +1,6 @@
+# 2.1.2
+- Add customizable post step actions.
+
 # 2.1.1
 - Add functions to edit biomes, blocks or entities at the end of the world generation.
 - Publish to maven central gradle config (Change the group for that & remove Underilla-Spigot directory).
