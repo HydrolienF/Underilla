@@ -16,6 +16,7 @@ import fr.formiko.mc.underilla.paper.listener.StructureEventListener;
 import fr.formiko.mc.underilla.paper.listener.WorldListener;
 import fr.formiko.mc.underilla.paper.preparing.ServerSetup;
 import fr.formiko.mc.underilla.paper.selector.Selector;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -52,6 +53,7 @@ public final class Underilla extends JavaPlugin {
     private Function<org.bukkit.block.Biome, org.bukkit.block.Biome> endBiomeTransformer;
     private Consumer<Block> endBlockTransformer;
     private Consumer<Entity> endEntityTransformer;
+    private Map<StringKeys, Runnable> endTaskActions = new EnumMap<>(StringKeys.class);
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
@@ -211,6 +213,10 @@ public final class Underilla extends JavaPlugin {
     }
     public void validateTask(StringKeys taskKey, boolean done) {
         getUnderillaConfig().saveNewValue(taskKey, done ? DONE : FAILED);
+        if (done && endTaskActions.containsKey(taskKey)) {
+            Underilla.info("Running post action for task " + taskKey);
+            endTaskActions.get(taskKey).run();
+        }
         runNextStepsAfterWorldInit();
     }
     public void validateInitServerTask(StringKeys taskKey, boolean done) {
@@ -232,6 +238,7 @@ public final class Underilla extends JavaPlugin {
     public Consumer<Entity> getEndEntityTransformer() { return endEntityTransformer; }
     public void setEndEntityTransformer(Consumer<Entity> endEntityTransformer) { this.endEntityTransformer = endEntityTransformer; }
     public boolean hasEndEntityTransformer() { return endEntityTransformer != null; }
+    public void setPostTaskAction(Runnable action, StringKeys taskKey) { endTaskActions.put(taskKey, action); }
 
     // run tasks ------------------------------------------------------------------------------------------------------
     private void runChunky(boolean restart) {
