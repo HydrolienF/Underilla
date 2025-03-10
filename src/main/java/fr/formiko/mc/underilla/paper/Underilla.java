@@ -35,7 +35,6 @@ import org.popcraft.chunky.api.event.task.GenerationProgressEvent;
 
 public final class Underilla extends JavaPlugin {
 
-    private static Underilla instance;
     private UnderillaConfig underillaConfig;
     private BukkitWorldReader worldSurfaceReader;
     private @Nullable BukkitWorldReader worldCavesReader;
@@ -55,8 +54,6 @@ public final class Underilla extends JavaPlugin {
     private Consumer<Block> endBlockTransformer;
     private Consumer<Entity> endEntityTransformer;
     private Map<StringKeys, Runnable> endTaskActions = new EnumMap<>(StringKeys.class);
-
-    public Underilla() { instance = this; }
 
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
@@ -147,7 +144,7 @@ public final class Underilla extends JavaPlugin {
         }
     }
 
-    public static Underilla getInstance() { return instance; }
+    public static Underilla getInstance() { return getPlugin(Underilla.class); }
     public static UnderillaConfig getUnderillaConfig() { return getInstance().underillaConfig; }
 
 
