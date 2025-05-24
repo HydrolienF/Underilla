@@ -46,7 +46,7 @@ If you are strugeling with world generation, you can ask for **help on the Disco
 This guide will help you to generate the 0, 0 to 512, 512 area as a first test of Underilla.
 
 1.
-    1. Download [Java 21](https://adoptium.net/temurin/releases/?version=21).
+    1. Download and install [Java 21](https://adoptium.net/temurin/releases/?version=21).
     2. Download the latest paper version [here](https://papermc.io/downloads/paper).
     3. Create a new directory for your server and move the paper .jar file inside.
     4. Start the server in a terminal with `java -jar paper-1.21.4-222.jar -nogui` (Replace `1.21.4-222` by your paper version).
@@ -64,7 +64,7 @@ See the full guide below to generate other area than 0, 0 to 512, 512 & improve 
 ### Guide - Complete version
 
 1. Setup a paper server
-    1. Download [Java 21](https://adoptium.net/temurin/releases/?version=21).
+    1. Download and install [Java 21](https://adoptium.net/temurin/releases/?version=21).
     2. Download the latest paper version [here](https://papermc.io/downloads/paper).
     3. Create a new directory for your server and move the paper .jar file inside.
     4. Create a `start.sh` on Linux or MacOS or a `start.bat` in Windows with `java -jar paper-1.21.4-222.jar -nogui` inside. (Replace `1.21.4-222` by your paper version.)
