@@ -53,8 +53,8 @@ This guide will help you to generate the 0, 0 to 512, 512 area as a first test o
     5. Open `eula.txt`, set `eula=true` and restart the server.
 2. 
     1. Download the latest Underilla version from the [releases](https://github.com/HydrolienF/Underilla/releases).
-    2. Move the downloaded jar file to `plugins/` in your server directory.
-    3. copy your custom world to `world_surface` in your server directory. (Only the `region/` sub directory of your world matters.)
+    2. Move the downloaded jar file to the existing directory `plugins/` in your server directory.
+    3. Copy your custom world to a new directory called `world_surface/` inside your server directory. (Only the `region/` sub directory of your world matters.)
 3. 
    1. Restart the server again. Underilla will update some settings & download 2 needed plugins and stop the server.
    2. Restart the server again. Underilla is launched, you can join the server once it's running or after it have finished and check the result.
@@ -76,9 +76,9 @@ See the full guide below to generate other area than 0, 0 to 512, 512 & improve 
     10. You now have a vanilla ready to work server. Time to setup Underilla.
 2. Setup Underilla
     1. Download the latest Underilla version from the [releases](https://github.com/HydrolienF/Underilla/releases).
-    2. Move the downloaded jar file to `plugins/` in your server directory.
+    2. Move the downloaded jar file to the existing directory `plugins/` in your server directory.
 3. Setup your custom world
-    1. copy your custom world to `world_surface` in your server directory. (Only the `region/` sub directory of your world matters.)
+    1. Copy your custom world to a new directory called `world_surface/` inside your server directory. (Only the `region/` sub directory of your world matters.)
 4. Configure Underilla
     1. Copy the config from [this file](https://github.com/HydrolienF/Underilla/blob/main/src/main/resources/config.yml) and save it as config.yml in `plugins/Underilla/`. The default config can also be initialized by running underilla, but copying it from the repo ensure that Underilla config is configured before Underilla starts.
     2. Edit `generationArea` inside `plugins/Underilla/config.yml` to match your surface world size. If you just want to test Underilla for a 1st generation, you can keep default values.
