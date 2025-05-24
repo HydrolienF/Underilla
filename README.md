@@ -48,7 +48,7 @@ This guide will help you to generate the 0, 0 to 512, 512 area as a first test o
 1.
     1. Download the latest paper version [here](https://papermc.io/downloads/paper).
     2. Create a new directory for your server and move the paper .jar file inside.
-    3. Start the server with `java -jar paper-1.21.4-76.jar -nogui` (Replace `1.21.4-76` by your paper version).
+    3. Start the server with `java -jar paper-1.21.4-222.jar -nogui` (Replace `1.21.4-222` by your paper version).
     4. Open `eula.txt`, set `eula=true` and restart the server.
 2. 
     1. Download the latest Underilla version from the [releases](https://github.com/HydrolienF/Underilla/releases).
@@ -65,7 +65,7 @@ See the full guide below to generate other area than 0, 0 to 512, 512 & improve 
 1. Setup a paper server
     1. Download the latest paper version [here](https://papermc.io/downloads/paper).
     2. Create a new directory for your server and move the paper .jar file inside.
-    3. Create a `start.sh` on Linux or MacOS or a `start.bat` in Windows with `java -jar paper-1.21.4-76.jar -nogui` inside. (Replace `1.21.4-76` by your paper version.)
+    3. Create a `start.sh` on Linux or MacOS or a `start.bat` in Windows with `java -jar paper-1.21.4-222.jar -nogui` inside. (Replace `1.21.4-222` by your paper version.)
     4. On Linux & MacOS only, give exec perms to `start.sh` by running `chmod 700 start.sh`.
     5. Start the server with `./start.sh` on Linux and MacOS or `./start.bat` on Windows.
     6. The server stops because of eula, open `eula.txt`, set `eula=true` and restart the server.
