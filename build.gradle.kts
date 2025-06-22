@@ -3,18 +3,18 @@ import io.papermc.hangarpublishplugin.model.Platforms
 plugins {
     `java-library`
     id("io.github.goooler.shadow") version "8.1.7"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.12" // paperweight // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17" // paperweight // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
     `maven-publish` // Add ./gradlew publishToMavenLocal
     id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("io.papermc.hangar-publish-plugin") version "0.1.3"
     id("org.sonarqube") version "5.0.0.4638"
 }
 
 group = "fr.formiko.mc.underilla"
 version = "2.1.5"
 description="Generate vanilla cave in custom world."
-val mainMinecraftVersion = "1.21.4"
-val supportedMinecraftVersions = "1.21.3 - 1.21.4"
+val mainMinecraftVersion = "1.21.6"
+val supportedMinecraftVersions = "1.21.3 - 1.21.6"
 val voidWorldGeneratorVersion = "1.3.2"
 val chunkyVersion = "1.4.28"
 
