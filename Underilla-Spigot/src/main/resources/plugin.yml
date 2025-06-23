@@ -1,7 +1,0 @@
-name: Underilla
-authors: [ Jeshuakrc, Hydrolien ]
-version: '$version'
-main: ${group}.Underilla
-description: $description
-api-version: "$apiVersion"
-load: STARTUP

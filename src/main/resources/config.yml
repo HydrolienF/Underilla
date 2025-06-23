@@ -1,0 +1,223 @@
+debug: false
+
+# For all the biome config option, biomes must be defined as Paper Biome or as biome resource key for example `minecraft:plains` or as a biome tag for example `#minecraft:is_ocean`. https://jd.papermc.io/paper/1.21.4/org/bukkit/block/Biome.html
+
+# The number of seconds between each progress message. < 1 values will disable the progress messages.
+printProgressEveryXSeconds: 10 
+
+# Steps to merge the worlds -------------------------------------------------------------------------------------------
+# steps can be "todo", "doing", "done", "failed" or "skip"
+# If you don't want a step to be done, set it to "skip"
+steps:
+  downloadDependencyPlugins: "todo"
+  setupPaperForQuickGeneration: "skip"
+  # generateSurfaceWorld: "todo" # Might be added later
+  setUnderillaAsWorldGenerator: "todo"
+  # Remove world folder if it already exists
+  # Need a restart before running this step
+  underillaGeneration: "todo"
+  cleaningBlocks: "todo"
+  cleaingEntities: "todo"
+
+
+# The world to merge the terrain into
+finalWorld:
+  name: "world"
+
+# The world to copy the surface from
+surfaceWorld:
+  name: "world_surface"
+  blocks:
+    # List of blocks of surface world to replace by another block. It will replace the block defined here by the block defined in the value.
+    # Remove blocks by replacing them with AIR.
+    # You might use a world that you didn't build yourself in world painter. Often that world will contains some blocks that you don't want in your final world.
+    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html.
+    toReplace: {}
+  # If true, only the top y biome value of the surface world will be copied. This increase performance a bit and remove any cave biome that might be in the surface world. If you have various biomes at the same x, z values with different y values, and want to keep them, set this to false.
+  useTopYBiomeOnly: true
+
+
+# Set this area to match the surface world coordinates if you want to merge the entire surface world.
+# You can do test with a smaller area to speed up the process.
+# Each value should be a multiple of 16. The min values are inclusive, the max values are exclusive.
+generationArea:
+  minX: 0
+  minZ: 0
+  maxX: 512
+  maxZ: 512
+  # minY & maxY are the final world limits.
+  minY: -64
+  maxY: 320
+
+# Which world generator to use for the chunks that are out of the surface world.
+# Possible values: "VoidWorldGenerator", "VANILLA" or any other world generator plugin name that is installed on your server.
+# VANILLA will generate the chunks with the default world generator.
+# VoidWorldGenerator will generate void chunks. It's not possible to never generate chunks, so the best way to avoid having blocks outside of the surface world is to use this generator.
+outOfTheSurfaceWorldGenerator: "VoidWorldGenerator"
+
+# If true caves block will be transferred from cavesWorld to the merged world. Else it will be generated from a new vanilla world.
+# This is useful if you want to have a custom underground from an existing world. This is mandatory if you wich to transfer underground biomes as "LUSH_CAVES".
+transferBlocksFromCavesWorld: false
+# If true caves biomes in the list transferedCavesWorldBiomes will be transferred from cavesWorld to the merged world.
+# DISABLED FOR NOW.
+transferBiomesFromCavesWorld: false
+# Directory where the caves world is stored. It must be in the same directory as the surface world.
+cavesWorld:
+  name: "world_caves"
+# Witch biome to transfer from cavesWorld to the merged world.
+# Caves world biomes won't be transferred in preserveBiomes.
+# Caves world won't be transferred over surfaceAndAbsolute.limit.
+transferedCavesWorldBiomes: []
+
+
+# How to merge vanilla/caves and surface worlds.
+#   - SURFACE: Generation will be based on the custom word surface. It have a top limits with surfaceAndAbsolute.limit and always generate world at least x blocks below the custom world surface (see relative_and_surface.depth). This is the best choice for most cases.
+#   - ABSOLUTE: At a fixed Y height.
+#   - NONE: Just... don't merge. Surface world will be re-generated without vanilla underground.
+strategy: "SURFACE"
+
+
+# Only for SURFACE & ABSOLUTE strategy
+surfaceAndAbsolute:
+  # The Y height dividing surface world above and vanilla worlds below.
+  # On SURFACE strategy, this is just the max value. Surface will be calculated from the surface world.
+  limit: 320
+
+# Only for SURFACE strategy
+surface:
+  # How deep surface world terrain should dig into vanilla word.
+  depth: 6
+  # How deep surface world terrain should dig into vanilla word if there is air next to that block.
+  # This is useful for cliffs or any terrain that have more than depth block of difference bewteen 2 close columns.
+  # If you are sure that you don't have any cliffs, you should disable this feature to speed up the generation.
+  adaptativeDepth:
+    enabled: true
+    # How many blocks can be placed to hide caves blocks on a cliff.
+    maxDepth: 50
+    # How many blocks will be hidden under the surface at least.
+    minHiddenBlocksDepth: 2
+
+# Non solid blocks are always ignored for surface calculation.
+# Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html. Regular expression is allowed.
+ignoredBlockForSurfaceCalculation:
+  - ".*_LEAVES"
+  - ".*_LOG"
+  - ".*_WOOD"
+  - ".*_PLANKS"
+  - ".*_FENCE"
+  - ".*_FENCE_GATE"
+  - ".*_WALL"
+  - ".*_DOOR"
+  - ".*_TRAPDOOR"
+  - ".*_STEM"
+  - "ICE"
+
+
+# The biomes where vanilla underground will not be generated.
+preserveBiomes: []
+
+# Weather or not to allow vanilla Minecraft populate/decorate over the surface world.
+vanillaPopulation:
+  enabled: true
+
+# Weather or not to keep ores from reference world underground.
+# It is usefull when vanillaPopulation is set to false.
+keptReferenceWorldBlocks: []
+
+structures:
+  # Weather or not to allow vanilla Minecraft generate structures in the world.
+  enabled: true
+  # Structures defines here won't ever generate, regardless of the above setting.
+  # Structures must be defined as minecraft key or Structure enum from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/generator/structure/Structure.html
+  # Example: ["minecraft:mineshaft","MONUMENT"]
+  except: []
+  only: []
+
+# Carvers -------------------------------------------------------------------------------------------------------------
+carvers:
+  # Weather or not to allow vanilla Minecraft generate carvers in the world. It will use datapack carvers if specific carvers are defined in the biome .json files of a datapack.
+  enabled: true
+  # Apply carvers with special rules on the biomes listed here.
+  # If both onlyOn and exceptOn are empty, the carvers will be applied on all biomes. 
+  # Do not use both onlyOn and exceptOn at the same time.
+  # The carvers will be applied once per chunk. So it might carve or not a chunk that have different biomes.
+  applyCarversOnBiomes:
+    # Apply carvers only on the biomes listed here.
+    onlyOn: []
+    # Apply carvers on all biomes except the ones listed here.
+    exceptOn: []
+  
+  # If true the carvers will be applied before copying the reference world to the final world.
+  # So the surface will not be carved by the carvers.
+  preserveSurfaceWorldFromCavers: true
+  # Preserve the surface world from cavers with special rules on the biomes listed here.
+  # If both onlyOn and exceptOn are empty, the carvers will be applied on all biomes.
+  # Do not use both onlyOn and exceptOn at the same time.
+  preserveSurfaceWorldFromCaversOnBiomes:
+    # Preserve the surface world from cavers only on the biomes listed here.
+    onlyOn: []
+    # Preserve the surface world from cavers on all biomes except the ones listed here.
+    exceptOn: []
+
+  # If true, the liquid blocks will be preserved from the carvers. This avoid having holes in oceans even when the surface is carved.
+  preserveLiquidFromCavers: true
+
+# Biomes transfer -----------------------------------------------------------------------------------------------------
+biomesMerging:
+  # From where to take the biomes the underground part of the world.
+  # Over the surface, only the surface biomes will be taken.
+  # Default value use the caves biomes from the caves generation is there is any, else it will use the surface biomes.
+  # Having this biome is mandatory to have the features that come with it as the dripstones.
+  fromCavesGeneration:
+    enabled: true
+    onlyOn:
+      - "minecraft:lush_caves"
+      - "minecraft:dripstone_caves"
+      - "minecraft:deep_dark"
+    exceptOn: []
+    # If true, the biome generated by the caves generator will be used only under the surface world.
+    # You probably want to keep this to true to avoid for example having dripstones on the surface.
+    onlyUnderSurface: true
+
+# Cleaning after generation -------------------------------------------------------------------------------------------
+clean:
+  blocks:
+    enabled: true
+    # If removeUnstableBlocks is true, the blocks that are not stable, as flowers over an air block, will be removed.
+    removeUnstableBlocks: true
+
+    # List of blocks to support by another block. It will replace the lower block of a column by the block defined here.
+    # This is useful to avoid having floating sand or gravel.
+    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html.
+    toSupport:
+      "SAND": "SANDSTONE"
+      "RED_SAND": "RED_SANDSTONE"
+      "GRAVEL": "ANDESITE"
+    
+    # List of blocks to replace by another block. It will replace the block defined here by the block defined in the value.
+    # Remove blocks by replacing them with AIR.
+    # To replace will be run after toSupport.
+    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html.
+    toReplace: {}
+
+  entities:
+    enabled: true
+    # Must be define as an EntityType from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/entity/EntityType.html. Regular expression is allowed.
+    toRemove:
+      - "ITEM" # Items resting on the ground.
+
+# Cache settings ------------------------------------------------------------------------------------------------------
+# Most memory is used by the server itself to interact with the world, we have no control over this.
+# Having almost 100% RAM usage is not an issue as long as the generation is not slow down. If there is no free CPU time, Java will slow down the garbage collector and the server will use more memory. Use Spark profiler to check if the server have memory issue.
+
+# How many region files to keep in memory.
+# If you don't have much memory, you can reduce this number down to 1.
+# Value over 16 probably won't have any impact as the world is generated region by region.
+# 16 is enough to have 16 regions files loaded and as much chunk loaded as 1 full region can have.
+cache:
+  size: 16
+
+# Dependencies versions -----------------------------------------------------------------------------------------------
+# No need to change this unless you know what you are doing.
+chunky: "$chunkyVersion"
+voidWorldGenerator: "$voidWorldGeneratorVersion"

@@ -1,0 +1,16 @@
+name: Underilla
+authors: [ Jeshuakrc, Hydrolien ]
+version: '$version'
+main: ${group}.paper.Underilla
+description: $description
+api-version: "$apiVersion"
+load: STARTUP
+
+dependencies:
+  server:
+    VoidWorldGenerator:
+      load: BEFORE
+      required: false # In fact, it is required, but we want to auto download them if not present
+    Chunky:
+      load: BEFORE
+      required: false # In fact, it is required, but we want to auto download them if not present
