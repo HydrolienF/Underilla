@@ -1,3 +1,6 @@
+# 2.1.6
+- Support 1.21.5 & 1.21.6. (From 1.21.3 to 1.21.6)
+
 # 2.1.2
 - Add customizable post step actions.
 
