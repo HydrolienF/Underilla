@@ -13,6 +13,7 @@
       "sound": "minecraft:ambient.cave",
       "tick_delay": 6000
     },
+    "music_volume": 1.0,
     "sky_color": 7907327,
     "water_color": 4159204,
     "water_fog_color": 329011
@@ -71,12 +72,15 @@
     [
       "minecraft:glow_lichen",
       "minecraft:patch_tall_grass_2",
+      "minecraft:patch_bush",
+      "minecraft:trees_plains",
       "minecraft:flower_plains",
       "minecraft:patch_grass_plain",
       "minecraft:brown_mushroom_normal",
       "minecraft:red_mushroom_normal",
+      "minecraft:patch_pumpkin",
       "minecraft:patch_sugar_cane",
-      "minecraft:patch_pumpkin"
+      "minecraft:patch_firefly_bush_near_water"
     ],
     [
       "minecraft:freeze_top_layer"
