@@ -87,7 +87,7 @@ See the full guide below to generate other area than 0, 0 to 512, 512 & improve 
 5. Configure datapack
     1. If your custom world already have a datapack, you can move it to `world/datapacks/` to keep your custom biomes etc.
     2. If you don't have a datapack yet, you should create one from [vanilla biome files](https://github.com/misode/mcmeta/tree/data) where you have remove the features you don't want. For example if your custom surface world already have trees and most important, have caves high enought for your world.
-    3. /!\ Make sure that cave will be generated under montains by having a high y level on your datapack. You can use [this basic datapack](https://github.com/HydrolienF/Underilla/tree/main/UnderillaBaseDataPack) to take care of the height or include it's files into your datapack. If you miss this step, there might be some empty space under montains in your world, but the generation will work.
+    3. /!\ Make sure that cave will be generated under montains by having a high y level on your datapack. You can use [this basic datapack](https://github.com/HydrolienF/Underilla/tree/main/DatapackExamples/UnderillaBaseDataPack) to take care of the height or include it's files into your datapack. If you miss this step, there might be some empty space under montains in your world, but the generation will work.
 6. Start **caves generation**
     1. Run the server again, this time the eula have been accepted, so the server will start. The 1st time you start the server Underilla will download it's dependencies to your `plugins/`, configure paper for faster world generation & set Underilla as world Generator in `bukkit.yml`. This steps can be disabled in the config.
     2. If you have set a start script, the server should restart automaticaly, if not you will have to restart it manually.
@@ -144,7 +144,7 @@ Create a working jar with `./gradlew assemble`.
 
 Run a local paper server with the example map & datapack on Linux.
 ```sh
-rm run/world_surface/ -fr; cp testMap/world/ run/world_surface/; rm -fr run/world/; mkdir -p run/world/datapacks; cp UnderillaBaseDataPack/ run/world/datapacks; ./gradlew runServer
+rm run/world_surface/ -fr; cp testMap/world/ run/world_surface/; rm -fr run/world/; mkdir -p run/world/datapacks; cp DatapackExamples/UnderillaBaseDataPack/ run/world/datapacks; ./gradlew runServer
 ```
 
 Build for publication with `./gradlew clean zipStagingDeploy`
