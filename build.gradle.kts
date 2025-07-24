@@ -1,5 +1,3 @@
-import io.papermc.hangarpublishplugin.model.Platforms
-
 plugins {
     `java-library`
     id("io.github.goooler.shadow") version "8.1.7"
@@ -11,10 +9,10 @@ plugins {
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.1.6"
+version = "2.1.7"
 description="Generate vanilla cave in custom world."
-val mainMinecraftVersion = "1.21.6"
-val supportedMinecraftVersions = "1.21.3 - 1.21.6"
+val mainMinecraftVersion = "1.21.8"
+val supportedMinecraftVersions = "1.21.3 - 1.21.8"
 val voidWorldGeneratorVersion = "1.3.2"
 val chunkyVersion = "1.4.28"
 
@@ -30,7 +28,7 @@ repositories {
 
 
 dependencies {
-    // compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT") // without paperweight
+    // compileOnly("io.papermc.paper:paper-api:$mainMinecraftVersion-R0.1-SNAPSHOT") // without paperweight
     paperweight.paperDevBundle("$mainMinecraftVersion-R0.1-SNAPSHOT")
     implementation("fr.formiko.mc.biomeutils:biomeutils:1.1.8")
     implementation("com.github.FormikoLudo:Utils:0.0.9")
@@ -126,6 +124,66 @@ tasks.register("echoReleaseName") {
     }
 }
 
+val extractChangelog = tasks.register("extractChangelog") {
+    group = "documentation"
+    description = "Extracts the changelog for the current project version from CHANGELOG.md, including the version header."
+
+    val changelog = project.objects.property(String::class)
+    outputs.upToDateWhen { false }
+
+    doLast {
+        val version = project.version.toString()
+        val changelogFile = project.file("CHANGELOG.md")
+
+        if (!changelogFile.exists()) {
+            println("CHANGELOG.md not found.")
+            changelog.set("No changelog found.")
+            return@doLast
+        }
+
+        val lines = changelogFile.readLines()
+        val entries = mutableListOf<String>()
+        var foundVersion = false
+
+        for (line in lines) {
+            when {
+                // Include the version line itself
+                line.trim().equals("# $version", ignoreCase = true) -> {
+                    foundVersion = true
+                    entries.add(line)
+                }
+                // Stop collecting at the next version header
+                foundVersion && line.trim().startsWith("# ") -> break
+                // Collect lines after the version header
+                foundVersion -> entries.add(line)
+            }
+        }
+
+        val result = if (entries.isEmpty()) {
+            "Update to $version."
+        } else {
+            entries.joinToString("\n").trim()
+        }
+
+        // println("Changelog for version $version:\n$result")
+        changelog.set(result)
+    }
+
+    // Make changelog accessible from other tasks
+    extensions.add("changelog", changelog)
+}
+
+tasks.register("echoLatestVersionChangelog") {
+    group = "documentation"
+    description = "Displays the latest version change."
+
+    dependsOn(tasks.named("extractChangelog"))
+
+    doLast {
+        println((extractChangelog.get().extensions.getByName("changelog") as Property<String>).get())
+    }
+}
+
 val versionString: String = version as String
 val isRelease: Boolean = !versionString.contains("SNAPSHOT")
 
@@ -133,14 +191,16 @@ hangarPublish { // ./gradlew publishPluginPublicationToHangar
     publications.register("plugin") {
         version.set(project.version as String)
         channel.set(if (isRelease) "Release" else "Snapshot")
-        // id.set(project.name as String)
-        id.set("Underilla")
+        id.set(project.name)
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
+        changelog.set(
+            extractChangelog.map {
+                (it.extensions.getByName("changelog") as Property<String>).get()
+            }
+        )
         platforms {
-            register(Platforms.PAPER) {
-                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
-                // jar.set(File("build/libs/${project.name}-${project.version}.jar"))
-                // externalDownloadUrl.set("https://github.com/HydrolienF/Underilla/releases/download/1.6.14/Underilla-1.6.14.jar")
+            register(io.papermc.hangarpublishplugin.model.Platforms.PAPER) {
+                url = "https://github.com/HydrolienF/"+project.name+"/releases/download/"+versionString+"/"+project.name+"-"+versionString+".jar"
 
                 // Set platform versions from gradle.properties file
                 val versions: List<String> = supportedMinecraftVersions.replace(" ", "").split(",")
