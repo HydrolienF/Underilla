@@ -1,6 +1,6 @@
 debug: false
 
-# For all the biome config option, biomes must be defined as Paper Biome or as biome resource key for example `minecraft:plains` or as a biome tag for example `#minecraft:is_ocean`. https://jd.papermc.io/paper/1.21.4/org/bukkit/block/Biome.html
+# For all the biome config option, biomes must be defined as Paper Biome or as biome resource key for example `minecraft:plains` or as a biome tag for example `#minecraft:is_ocean`. https://jd.papermc.io/paper/1.21.8/org/bukkit/block/Biome.html
 
 # The number of seconds between each progress message. < 1 values will disable the progress messages.
 printProgressEveryXSeconds: 10 
@@ -31,7 +31,8 @@ surfaceWorld:
     # List of blocks of surface world to replace by another block. It will replace the block defined here by the block defined in the value.
     # Remove blocks by replacing them with AIR.
     # You might use a world that you didn't build yourself in world painter. Often that world will contains some blocks that you don't want in your final world.
-    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html.
+    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.8/org/bukkit/Material.html.
+    # Example: ["SAND": "SANDSTONE", "GRAVEL": "ANDESITE"]
     toReplace: {}
   # If true, only the top y biome value of the surface world will be copied. This increase performance a bit and remove any cave biome that might be in the surface world. If you have various biomes at the same x, z values with different y values, and want to keep them, set this to false.
   useTopYBiomeOnly: true
@@ -98,7 +99,8 @@ surface:
     minHiddenBlocksDepth: 2
 
 # Non solid blocks are always ignored for surface calculation.
-# Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html. Regular expression is allowed.
+# Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.8/org/bukkit/Material.html. Regular expression is allowed.
+# Example : ["ICE", ".*_LOG", "IRON_ORE"]
 ignoredBlockForSurfaceCalculation:
   - ".*_LEAVES"
   - ".*_LOG"
@@ -122,13 +124,15 @@ vanillaPopulation:
 
 # Weather or not to keep ores from reference world underground.
 # It is usefull when vanillaPopulation is set to false.
+# Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.8/org/bukkit/Material.html. Regular expression is allowed.
+# Example : ["ICE", ".*_LOG", "IRON_ORE"]
 keptReferenceWorldBlocks: []
 
 structures:
   # Weather or not to allow vanilla Minecraft generate structures in the world.
   enabled: true
   # Structures defines here won't ever generate, regardless of the above setting.
-  # Structures must be defined as minecraft key or Structure enum from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/generator/structure/Structure.html
+  # Structures must be defined as minecraft key or Structure enum from Paper API: https://jd.papermc.io/paper/1.21.8/org/bukkit/generator/structure/Structure.html
   # Example: ["minecraft:mineshaft","MONUMENT"]
   except: []
   only: []
@@ -188,7 +192,8 @@ clean:
 
     # List of blocks to support by another block. It will replace the lower block of a column by the block defined here.
     # This is useful to avoid having floating sand or gravel.
-    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html.
+    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.8/org/bukkit/Material.html.
+    # Example: ["SAND": "SANDSTONE", "GRAVEL": "ANDESITE"]
     toSupport:
       "SAND": "SANDSTONE"
       "RED_SAND": "RED_SANDSTONE"
@@ -197,12 +202,14 @@ clean:
     # List of blocks to replace by another block. It will replace the block defined here by the block defined in the value.
     # Remove blocks by replacing them with AIR.
     # To replace will be run after toSupport.
-    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/Material.html.
+    # Must be define as Material from Paper API: https://jd.papermc.io/paper/1.21.8/org/bukkit/Material.html.
+    # Example: ["SAND": "SANDSTONE", "GRAVEL": "ANDESITE"]
     toReplace: {}
 
   entities:
     enabled: true
-    # Must be define as an EntityType from Paper API: https://jd.papermc.io/paper/1.21.4/org/bukkit/entity/EntityType.html. Regular expression is allowed.
+    # Must be define as an EntityType from Paper API: https://jd.papermc.io/paper/1.21.8/org/bukkit/entity/EntityType.html. Regular expression is allowed.
+    # Example: ["ITEM", "ACACIA.*"]
     toRemove:
       - "ITEM" # Items resting on the ground.
 
