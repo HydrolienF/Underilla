@@ -78,9 +78,9 @@ See the full guide below to generate other area than 0, 0 to 512, 512 & improve 
     1. Download the latest Underilla version from the [releases](https://github.com/HydrolienF/Underilla/releases).
     2. Move the downloaded jar file to the existing directory `plugins/` in your server directory.
 3. Setup your custom world
-    1. Copy your custom world to a new directory called `world_surface/` inside your server directory. (Only the `region/` sub directory of your world matters.)
+    1. Copy your custom world to a new directory called `world_surface/` inside your server directory. (Only the `region/` sub directory of your world matters. Make sure to have some region file in `world_surface/region/`.)
 4. Configure Underilla
-    1. Copy the config from [this file](https://github.com/HydrolienF/Underilla/blob/main/src/main/resources/config.yml) and save it as config.yml in `plugins/Underilla/`. The default config can also be initialized by running underilla, but copying it from the repo ensure that Underilla config is configured before Underilla starts.
+    1. Copy the config from [this file](https://github.com/HydrolienF/Underilla/blob/main/src/main/resources/config.yml) and save it as config.yml in `plugins/Underilla/`. The default config can also be initialized by running underilla, but copying it from the repo ensure that Underilla config is configured before Underilla starts. If the `plugins/Underilla/` directory does not exist yet, you can create it.
     2. Edit `generationArea` inside `plugins/Underilla/config.yml` to match your surface world size. If you just want to test Underilla for a 1st generation, you can keep default values.
     3. You can read the other fields of the config and edit some of them. This steps can be done later after a 1st generation try, to customize your world generation.
     4. If you have already done a generation, you need to switch back some step (underillaGeneration, cleaningBlocks, cleaingEntities) from "done" to "todo".
