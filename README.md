@@ -54,7 +54,7 @@ This guide will help you to generate the 0, 0 to 512, 512 area as a first test o
 2. 
     1. Download the latest Underilla version from the [releases](https://github.com/HydrolienF/Underilla/releases).
     2. Move the downloaded jar file to the existing directory `plugins/` in your server directory.
-    3. Copy your custom world to a new directory called `world_surface/` inside your server directory. (Only the `region/` sub directory of your world matters.)
+    3. Copy your custom world to a new directory called `world_surface/` inside your server directory. (Only the `region/` sub directory of your world matters. Make sure to have some region file in `world_surface/region/`.)
 3. 
    1. Restart the server again. Underilla will update some settings & download 2 needed plugins and stop the server.
    2. Restart the server again. Underilla is launched, you can join the server once it's running or after it have finished and check the result.
