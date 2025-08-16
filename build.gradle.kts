@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.1.7"
+version = "2.1.8"
 description="Generate vanilla cave in custom world."
 val mainMinecraftVersion = "1.21.8"
 val supportedMinecraftVersions = "1.21.3 - 1.21.8"

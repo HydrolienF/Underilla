@@ -1,3 +1,6 @@
+# 2.1.8
+- generationArea X and Z coordinates can be set to auto and will be auto computed.
+
 # 2.1.7
 - Support from 1.21.3 to 1.21.8
 

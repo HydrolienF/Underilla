@@ -6,6 +6,7 @@ import fr.formiko.mc.underilla.paper.Underilla;
 import fr.formiko.mc.underilla.paper.selector.Selector;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import org.bukkit.generator.structure.Structure;
 public class UnderillaConfig {
     private final EnumMap<BooleanKeys, Boolean> booleanMap;
     private final EnumMap<IntegerKeys, Integer> integerMap;
+    private final EnumMap<IntegerKeys, Integer> integerAutoMap;
     private final EnumMap<StringKeys, String> stringMap;
     private final EnumMap<SetStringKeys, Set<String>> listStringMap;
     private final EnumMap<SetBiomeStringKeys, Set<String>> listBiomeStringMap;
@@ -39,6 +41,7 @@ public class UnderillaConfig {
     public UnderillaConfig(FileConfiguration fileConfiguration) {
         booleanMap = new EnumMap<>(BooleanKeys.class);
         integerMap = new EnumMap<>(IntegerKeys.class);
+        integerAutoMap = new EnumMap<>(IntegerKeys.class);
         stringMap = new EnumMap<>(StringKeys.class);
         listStringMap = new EnumMap<>(SetStringKeys.class);
         listBiomeStringMap = new EnumMap<>(SetBiomeStringKeys.class);
@@ -91,12 +94,34 @@ public class UnderillaConfig {
             booleanMap.put(key, fileConfiguration.getBoolean(key.path, key.defaultValue));
         }
 
+        // Surface world name need to be loaded before IntegerKeys
+        stringMap.clear();
+        for (StringKeys key : StringKeys.values()) {
+            if (!fileConfiguration.contains(key.path)) {
+                warnKeyMissing(key);
+            }
+            stringMap.put(key, fileConfiguration.getString(key.path, key.defaultValue));
+        }
+        mergeStrategy = MergeStrategy.valueOf(getString(StringKeys.STRATEGY));
+
         integerMap.clear();
+        integerAutoMap.clear();
         for (IntegerKeys key : IntegerKeys.values()) {
             if (!fileConfiguration.contains(key.path)) {
                 warnKeyMissing(key);
             }
-            int value = fileConfiguration.getInt(key.path, key.defaultValue);
+            int value;
+            if (fileConfiguration.getString(key.path).equalsIgnoreCase("auto")) {
+                // If it's a coordinate that we can guess from the region files.
+                if (Set.of(IntegerKeys.GENERATION_AREA_MIN_X, IntegerKeys.GENERATION_AREA_MAX_X, IntegerKeys.GENERATION_AREA_MIN_Z,
+                        IntegerKeys.GENERATION_AREA_MAX_Z).contains(key)) {
+                    value = guessCoordinate(key);
+                } else {
+                    value = key.defaultValue;
+                }
+            } else {
+                value = fileConfiguration.getInt(key.path, key.defaultValue);
+            }
             if (value > key.max) {
                 Underilla.warning("Value " + value + " is greater than max " + key.max + " for key " + key);
                 value = key.max;
@@ -108,15 +133,6 @@ public class UnderillaConfig {
             integerMap.put(key, value);
         }
         swapAeraValueIfNeeded();
-
-        stringMap.clear();
-        for (StringKeys key : StringKeys.values()) {
-            if (!fileConfiguration.contains(key.path)) {
-                warnKeyMissing(key);
-            }
-            stringMap.put(key, fileConfiguration.getString(key.path, key.defaultValue));
-        }
-        mergeStrategy = MergeStrategy.valueOf(getString(StringKeys.STRATEGY));
 
         listStringMap.clear();
         for (SetStringKeys key : SetStringKeys.values()) {
@@ -175,6 +191,47 @@ public class UnderillaConfig {
         if (getInt(IntegerKeys.ADAPTATIVE_MIN_HIDDEN_BLOCKS_MERGE_DEPTH) > getInt(IntegerKeys.MERGE_DEPTH)) {
             integerMap.put(IntegerKeys.ADAPTATIVE_MIN_HIDDEN_BLOCKS_MERGE_DEPTH, getInt(IntegerKeys.MERGE_DEPTH));
         }
+    }
+
+    private int guessCoordinate(IntegerKeys key) {
+        // Compute the 4 coordinates of the area from the surface world that we can guess from regions files.
+        if (!integerAutoMap.containsKey(key)) {
+            // Read all file names in the regions folder.
+            String surfaceWorldName = getString(StringKeys.SURFACE_WORLD_NAME);
+            File surfaceWorldDirectory = new File(Bukkit.getPluginsFolder() + "/../" + surfaceWorldName + "/region");
+            File[] regionsFiles = surfaceWorldDirectory.listFiles((dir, name) -> name.endsWith(".mca"));
+            if (regionsFiles == null) {
+                throw new RuntimeException("Could not find regions files in " + surfaceWorldDirectory);
+            }
+
+            // Compute the min and max X and Z coordinates.
+            int minX = Integer.MAX_VALUE;
+            int minZ = Integer.MAX_VALUE;
+            int maxX = Integer.MIN_VALUE;
+            int maxZ = Integer.MIN_VALUE;
+            for (File regionsFile : regionsFiles) {
+                String fileName = regionsFile.getName();
+                // Expected format: r.<x>.<z>.mca
+                String[] parts = fileName.split("\\.");
+                if (parts.length >= 4 && parts[0].equals("r") && parts[3].equals("mca")) {
+                    int x = Integer.parseInt(parts[1]);
+                    int z = Integer.parseInt(parts[2]);
+
+                    minX = Math.min(minX, x);
+                    minZ = Math.min(minZ, z);
+                    maxX = Math.max(maxX, x);
+                    maxZ = Math.max(maxZ, z);
+                }
+            }
+            // Store the computed values.
+            integerAutoMap.put(IntegerKeys.GENERATION_AREA_MIN_X, minX * Underilla.REGION_SIZE);
+            integerAutoMap.put(IntegerKeys.GENERATION_AREA_MAX_X, (maxX + 1) * Underilla.REGION_SIZE);
+            integerAutoMap.put(IntegerKeys.GENERATION_AREA_MIN_Z, minZ * Underilla.REGION_SIZE);
+            integerAutoMap.put(IntegerKeys.GENERATION_AREA_MAX_Z, (maxZ + 1) * Underilla.REGION_SIZE);
+        }
+
+        // Return the value computed now or previously.
+        return integerAutoMap.get(key);
     }
 
     private void swapAeraValueIfNeeded() {
