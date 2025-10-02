@@ -1,6 +1,6 @@
 plugins {
     `java-library`
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("io.github.goooler.shadow") version "8.1.8"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.17" // paperweight // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
     `maven-publish` // Add ./gradlew publishToMavenLocal
     id("xyz.jpenilla.run-paper") version "2.3.1"
@@ -9,10 +9,10 @@ plugins {
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.1.8"
+version = "2.1.9"
 description="Generate vanilla cave in custom world."
-val mainMinecraftVersion = "1.21.8"
-val supportedMinecraftVersions = "1.21.3 - 1.21.8"
+val mainMinecraftVersion = "1.21.9"
+val supportedMinecraftVersions = "1.21.3 - 1.21.9"
 val voidWorldGeneratorVersion = "1.3.2"
 val chunkyVersion = "1.4.28"
 
