@@ -12,6 +12,7 @@ import fr.formiko.mc.underilla.paper.io.UnderillaConfig;
 import fr.formiko.mc.underilla.paper.io.UnderillaConfig.BooleanKeys;
 import fr.formiko.mc.underilla.paper.io.UnderillaConfig.IntegerKeys;
 import fr.formiko.mc.underilla.paper.io.UnderillaConfig.StringKeys;
+import fr.formiko.mc.underilla.paper.listener.ChunkGeneratedListener;
 import fr.formiko.mc.underilla.paper.listener.StructureEventListener;
 import fr.formiko.mc.underilla.paper.listener.WorldListener;
 import fr.formiko.mc.underilla.paper.preparing.ServerSetup;
@@ -62,7 +63,7 @@ public final class Underilla extends JavaPlugin {
             return GeneratorAccessor.getOutOfTheSurfaceWorldGenerator(worldName, id);
         }
         if (this.worldSurfaceReader == null) {
-            warning("No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
+            warning("No world with name '" + getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
             return super.getDefaultWorldGenerator(worldName, id);
         }
         ChunkGenerator outOfTheSurfaceWorldGenerator = GeneratorAccessor.getOutOfTheSurfaceWorldGenerator(worldName, id);
@@ -83,30 +84,36 @@ public final class Underilla extends JavaPlugin {
         if (!allStepsDone()) {
             // Loading reference world
             try {
-                this.worldSurfaceReader = new BukkitWorldReader(Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME));
-                info("World '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found.");
+                this.worldSurfaceReader = new BukkitWorldReader(getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME));
+                info("World '" + getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found.");
             } catch (NoSuchFieldException e) {
-                warning("No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
+                warning("No world with name '" + getUnderillaConfig().getString(StringKeys.SURFACE_WORLD_NAME) + "' found");
                 warning(() -> Tools.exceptionToString(e));
             }
             // Loading caves world if we should use it.
-            if (Underilla.getUnderillaConfig().getBoolean(BooleanKeys.TRANSFER_BLOCKS_FROM_CAVES_WORLD)
-                    || Underilla.getUnderillaConfig().getBoolean(BooleanKeys.TRANSFER_BIOMES_FROM_CAVES_WORLD)) {
+            if (getUnderillaConfig().getBoolean(BooleanKeys.TRANSFER_BLOCKS_FROM_CAVES_WORLD)
+                    || getUnderillaConfig().getBoolean(BooleanKeys.TRANSFER_BIOMES_FROM_CAVES_WORLD)) {
                 try {
                     info("Loading caves world");
-                    this.worldCavesReader = new BukkitWorldReader(Underilla.getUnderillaConfig().getString(StringKeys.CAVES_WORLD_NAME));
+                    this.worldCavesReader = new BukkitWorldReader(getUnderillaConfig().getString(StringKeys.CAVES_WORLD_NAME));
                 } catch (NoSuchFieldException e) {
-                    warning("No world with name '" + Underilla.getUnderillaConfig().getString(StringKeys.CAVES_WORLD_NAME) + "' found");
+                    warning("No world with name '" + getUnderillaConfig().getString(StringKeys.CAVES_WORLD_NAME) + "' found");
                     warning(() -> Tools.exceptionToString(e));
                 }
             }
 
             // Registering listeners
-            if (Underilla.getUnderillaConfig().getBoolean(BooleanKeys.STRUCTURES_ENABLED)) {
+            if (getUnderillaConfig().getBoolean(BooleanKeys.STRUCTURES_ENABLED)) {
                 structureEventListener = new StructureEventListener();
                 this.getServer().getPluginManager().registerEvents(structureEventListener, this);
             }
             this.getServer().getPluginManager().registerEvents(new WorldListener(), this);
+
+            if (getUnderillaConfig().getBoolean(BooleanKeys.CLEAN_BLOCKS_ENABLED)
+                    || getUnderillaConfig().getBoolean(BooleanKeys.CLEAN_ENTITIES_ENABLED)) {
+                info("Cleaning listener for blocks and/or entities have been init.");
+                this.getServer().getPluginManager().registerEvents(new ChunkGeneratedListener(), this);
+            }
         }
     }
 
@@ -174,13 +181,13 @@ public final class Underilla extends JavaPlugin {
     private void runStepsOnEnabled() {
         boolean needARestart = false;
 
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_DOWNLOAD_DEPENDENCY_PLUGINS).equals(TODO)) {
+        if (getUnderillaConfig().getString(StringKeys.STEP_DOWNLOAD_DEPENDENCY_PLUGINS).equals(TODO)) {
             needARestart = ServerSetup.downloadNeededDependencies() || needARestart;
         }
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_SETUP_PAPER_FOR_QUICK_GENERATION).equals(TODO)) {
+        if (getUnderillaConfig().getString(StringKeys.STEP_SETUP_PAPER_FOR_QUICK_GENERATION).equals(TODO)) {
             needARestart = ServerSetup.setupPaperWorkerthreads() || needARestart;
         }
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_SET_UNDERILLA_AS_WORLD_GENERATOR).equals(TODO)) {
+        if (getUnderillaConfig().getString(StringKeys.STEP_SET_UNDERILLA_AS_WORLD_GENERATOR).equals(TODO)) {
             needARestart = ServerSetup.setupBukkitWorldGenerator() || needARestart;
         }
         if (needARestart) {
@@ -192,24 +199,24 @@ public final class Underilla extends JavaPlugin {
         }
     }
     public void runNextStepsAfterWorldInit() {
-        if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(TODO)) {
+        if (getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(TODO)) {
             runChunky();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(DOING)) {
+        } else if (getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(DOING)) {
             restartChunky();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(TODO)) {
+        } else if (getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(TODO)) {
             runCleanBlocks();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DOING)) {
+        } else if (getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DOING)) {
             restartCleanBlocks();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(TODO)) {
+        } else if (getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(TODO)) {
             runCleanEntities();
-        } else if (Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DOING)) {
+        } else if (getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DOING)) {
             restartCleanEntities();
         }
     }
     public boolean allStepsDone() {
-        return Underilla.getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(DONE)
-                && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DONE)
-                && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DONE);
+        return getUnderillaConfig().getString(StringKeys.STEP_UNDERILLA_GENERATION).equals(DONE)
+                && getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DONE)
+                && getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DONE);
     }
     public void validateTask(StringKeys taskKey, boolean done) {
         getUnderillaConfig().saveNewValue(taskKey, done ? DONE : FAILED);
@@ -244,11 +251,11 @@ public final class Underilla extends JavaPlugin {
     private void runChunky(boolean restart) {
         Chunky chunky = ChunkyProvider.get();
         // startTask(String world, String shape, double centerX, double centerZ, double radiusX, double radiusZ, String pattern)
-        String worldName = Underilla.getUnderillaConfig().getString(StringKeys.FINAL_WORLD_NAME);
-        int minX = Underilla.getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MIN_X);
-        int minZ = Underilla.getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MIN_Z);
-        int maxX = Underilla.getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MAX_X);
-        int maxZ = Underilla.getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MAX_Z);
+        String worldName = getUnderillaConfig().getString(StringKeys.FINAL_WORLD_NAME);
+        int minX = getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MIN_X);
+        int minZ = getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MIN_Z);
+        int maxX = getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MAX_X);
+        int maxZ = getUnderillaConfig().getInt(IntegerKeys.GENERATION_AREA_MAX_Z);
         int centerX = (minX + maxX) / 2;
         int centerZ = (minZ + maxZ) / 2;
         int radiusX = (maxX - minX) / 2;
@@ -259,14 +266,13 @@ public final class Underilla extends JavaPlugin {
 
         chunky.getApi().onGenerationProgress(new Consumer<GenerationProgressEvent>() {
             long printTime = 0;
-            long printTimeEachXMs = Underilla.MS_PER_SECOND
-                    * Underilla.getUnderillaConfig().getInt(IntegerKeys.PRINT_PROGRESS_EVERY_X_SECONDS);
+            long printTimeEachXMs = Underilla.MS_PER_SECOND * getUnderillaConfig().getInt(IntegerKeys.PRINT_PROGRESS_EVERY_X_SECONDS);
             @Override
             public void accept(GenerationProgressEvent generationProgressEvent) {
                 if (printTime + printTimeEachXMs < System.currentTimeMillis()) {
                     printTime = System.currentTimeMillis();
                     FollowableProgressTask.printProgress(generationProgressEvent.chunks(), startTime,
-                            generationProgressEvent.progress() / 100, 1, 3, "Rate: " + (int) (generationProgressEvent.rate())
+                            generationProgressEvent.progress() / 100, 1, 1, "Rate: " + (int) (generationProgressEvent.rate())
                                     + ", Current: " + generationProgressEvent.x() + " " + generationProgressEvent.z());
                 }
             }
@@ -301,22 +307,22 @@ public final class Underilla extends JavaPlugin {
         cleanBlocksTask = new CleanBlocksTask(2, 3, selector);
         cleanBlocksTask.run();
     }
-    private void runCleanBlocks() { runCleanBlocks(Underilla.getUnderillaConfig().getSelector()); }
+    private void runCleanBlocks() { runCleanBlocks(getUnderillaConfig().getSelector()); }
     private void runCleanEntities(Selector selector) {
         setToDoingTask(StringKeys.STEP_CLEANING_ENTITIES);
         info("Starting clean entities task");
         cleanEntitiesTask = new CleanEntitiesTask(3, 3);
         cleanEntitiesTask.run();
     }
-    private void runCleanEntities() { runCleanEntities(Underilla.getUnderillaConfig().getSelector()); }
+    private void runCleanEntities() { runCleanEntities(getUnderillaConfig().getSelector()); }
 
     // stop tasks -----------------------------------------------------------------------------------------------------
     private void stopTasks() {
-        if (cleanBlocksTask != null && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DOING)) {
+        if (cleanBlocksTask != null && getUnderillaConfig().getString(StringKeys.STEP_CLEANING_BLOCKS).equals(DOING)) {
             Selector selector = cleanBlocksTask.stop();
             selector.saveIn("cleanBlocksTask");
         }
-        if (cleanEntitiesTask != null && Underilla.getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DOING)) {
+        if (cleanEntitiesTask != null && getUnderillaConfig().getString(StringKeys.STEP_CLEANING_ENTITIES).equals(DOING)) {
             Selector selector = cleanEntitiesTask.stop();
             selector.saveIn("cleanEntitiesTask");
         }

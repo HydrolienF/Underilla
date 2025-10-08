@@ -16,8 +16,8 @@ steps:
   # Remove world folder if it already exists
   # Need a restart before running this step
   underillaGeneration: "todo"
-  cleaningBlocks: "todo"
-  cleaingEntities: "todo"
+  cleaningBlocks: "skip"
+  cleaingEntities: "skip"
 
 
 # The world to merge the terrain into

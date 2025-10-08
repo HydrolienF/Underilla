@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.1.9"
+version = "2.2.0"
 description="Generate vanilla cave in custom world."
 val mainMinecraftVersion = "1.21.9"
 val supportedMinecraftVersions = "1.21.3 - 1.21.9"
@@ -19,10 +19,10 @@ val chunkyVersion = "1.4.28"
 repositories {
     mavenLocal()
     mavenCentral()
-    maven ("https://repo.papermc.io/repository/maven-public/")
-    maven ("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-    maven ("https://oss.sonatype.org/content/groups/public/")
-    maven ("https://jitpack.io")
+    maven("https://repo.papermc.io/repository/maven-public/")
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/groups/public/")
+    maven("https://jitpack.io")
     maven("https://repo.codemc.io/repository/maven-public/") // For Chunky
 }
 
