@@ -36,17 +36,21 @@ public class CleanBlocks {
 
 
     public static void cleanBlock(Block currentBlock, LevelReader levelReader) {
-        Block underCurrentBlock = currentBlock.getRelative(BlockFace.DOWN);
         Material startMaterial = currentBlock.getType();
 
-
-        if (!underCurrentBlock.isSolid() && !currentBlock.isEmpty()) {
-            // if currentBlock is a block to support (sand, gravel, etc) then replace it by the support block
-            Material toSupport = Underilla.getUnderillaConfig().getMaterialFromMap(MapMaterialKeys.CLEAN_BLOCK_TO_SUPPORT, startMaterial);
-            if (toSupport != null) {
-                currentBlock.setType(toSupport);
+        // If there is no block to support, do not load the underCurrentBlock to save time
+        if (!Underilla.getUnderillaConfig().getMapMaterial(MapMaterialKeys.CLEAN_BLOCK_TO_SUPPORT).isEmpty()) {
+            Block underCurrentBlock = currentBlock.getRelative(BlockFace.DOWN);
+            if (!underCurrentBlock.isSolid() && !currentBlock.isEmpty()) {
+                // if currentBlock is a block to support (sand, gravel, etc) then replace it by the support block
+                Material toSupport = Underilla.getUnderillaConfig().getMaterialFromMap(MapMaterialKeys.CLEAN_BLOCK_TO_SUPPORT,
+                        startMaterial);
+                if (toSupport != null) {
+                    currentBlock.setType(toSupport);
+                }
             }
         }
+
 
         // Replace currentBlock by an other one if it is need.
         Material toReplace = Underilla.getUnderillaConfig().getMaterialFromMap(MapMaterialKeys.CLEAN_BLOCK_TO_REPLACE, startMaterial);
