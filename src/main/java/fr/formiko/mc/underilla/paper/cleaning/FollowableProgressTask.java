@@ -44,7 +44,8 @@ public abstract class FollowableProgressTask {
         long timeForFullProgress = (long) ((System.currentTimeMillis() - startTime) / progress);
         long timeForFullProgressLeft = timeForFullProgress - (System.currentTimeMillis() - startTime);
         extraString = extraString == null ? "" : " " + extraString;
-        Underilla.info("Task " + taskID + "/" + tasksCount + " Progress: " + processed + "   " + doubleToPercent(progress) + " ETA: "
+        String taskIDCount = tasksCount > 1 ? " (" + taskID + "/" + tasksCount + ")" : "";
+        Underilla.info("Task" + taskIDCount + " Progress: " + processed + "   " + doubleToPercent(progress) + " ETA: "
                 + Duration.ofMillis(timeForFullProgressLeft) + extraString);
     }
     private static String doubleToPercent(double d) { return String.format("%.4f", d * 100) + "%"; }
