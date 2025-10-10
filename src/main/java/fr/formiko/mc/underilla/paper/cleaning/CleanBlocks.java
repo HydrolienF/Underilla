@@ -11,7 +11,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.generator.LimitedRegion;
+import org.bukkit.generator.WorldInfo;
 
 public class CleanBlocks {
     private static Set<Material> returnToDirt = Set.of(Material.GRASS_BLOCK, Material.PODZOL, Material.DIRT_PATH);
@@ -29,6 +32,81 @@ public class CleanBlocks {
             for (int z = 0; z < 16; z++) {
                 for (int y = minY; y < maxY; y++) {
                     cleanBlock(world.getBlockAt(startX + x, y, startZ + z), levelReader);
+                }
+            }
+        }
+    }
+
+    public static void cleanBlocks(WorldInfo worldInfo, int chunkX, int chunkZ, LimitedRegion limitedRegion) {
+        int minY = worldInfo.getMinHeight();
+        int maxY = worldInfo.getMaxHeight();
+        int minX = limitedRegion.getCenterBlockX() - limitedRegion.getBuffer() / 2;
+        int maxX = limitedRegion.getCenterBlockX() + limitedRegion.getBuffer() / 2;
+        int minZ = limitedRegion.getCenterBlockZ() - limitedRegion.getBuffer() / 2;
+        int maxZ = limitedRegion.getCenterBlockZ() + limitedRegion.getBuffer() / 2;
+        Underilla.info("Limited region: " + limitedRegion.getBuffer() + " " + minX + " " + maxX + " " + minZ + " " + maxZ);
+
+        for (int x = minX; x < maxX; x++) {
+            for (int z = minZ; z < maxZ; z++) {
+                for (int y = minY; y < maxY; y++) {
+                    if (!limitedRegion.isInRegion(x, y, z)) {
+                        Underilla.info("Block " + x + ", " + y + ", " + z + " is not in the region " + limitedRegion.getBuffer());
+                        continue;
+                    }
+                    BlockData blockData = limitedRegion.getBlockData(x, y, z);
+                    Material startMaterial = blockData.getMaterial();
+
+                    // If there is no block to support, do not load the underCurrentBlock to save time
+                    if (!Underilla.getUnderillaConfig().getMapMaterial(MapMaterialKeys.CLEAN_BLOCK_TO_SUPPORT).isEmpty() && y > minY) {
+                        // Block underCurrentBlock = currentBlock.getRelative(BlockFace.DOWN);
+                        BlockData underCurrentBlock = limitedRegion.getBlockData(x, y - 1, z);
+                        if (!underCurrentBlock.getMaterial().isSolid() && !(startMaterial == Material.AIR)) {
+                            // if currentBlock is a block to support (sand, gravel, etc) then replace it by the support block
+                            Material toSupport = Underilla.getUnderillaConfig().getMaterialFromMap(MapMaterialKeys.CLEAN_BLOCK_TO_SUPPORT,
+                                    startMaterial);
+                            if (toSupport != null) {
+                                limitedRegion.setBlockData(x, y, z, toSupport.createBlockData());
+                                Underilla.info("Block " + x + ", " + y + ", " + z + " was replaced by " + toSupport);
+                            }
+                        }
+                    }
+
+
+                    Material toReplace = Underilla.getUnderillaConfig().getMaterialFromMap(MapMaterialKeys.CLEAN_BLOCK_TO_REPLACE,
+                            startMaterial);
+                    if (toReplace != null) {
+                        limitedRegion.setBlockData(x, y, z, toReplace.createBlockData());
+                    }
+
+                    if (Underilla.getUnderillaConfig().getBoolean(BooleanKeys.CLEAN_BLOCKS_REMOVE_UNSTABLE_BLOCKS)) {
+                        // TODO
+                        // // org.bukkit.block.BlockState blockState = limitedRegion.getBlockState(chunkX + x, y, chunkZ + z);
+                        // World world = limitedRegion.getWorld();
+                        // LevelReader levelReader = ((CraftWorld) world).getHandle();
+                        // BlockPos blockPos = new BlockPos(chunkX + x, y, chunkZ + z);
+                        // net.minecraft.world.level.block.state.BlockState blockState = levelReader.getBlockState(blockPos);
+                        // if (!blockState.canSurvive(levelReader, blockPos)) {
+                        // if (returnToDirt.contains(startMaterial)) {
+                        // limitedRegion.setBlockData(chunkX + x, y, chunkZ + z, Material.DIRT.createBlockData());
+                        // } else {
+                        // // currentBlock.breakNaturally();
+                        // limitedRegion.setBlockData(chunkX + x, y, chunkZ + z, Material.AIR.createBlockData());
+                        // }
+                        // }
+                        // CraftLimitedRegion craftLimitedRegion = (CraftLimitedRegion) limitedRegion;
+                        // CraftBlock craftBlock = (CraftBlock) craftLimitedRegion.getBlock(x, y, z);
+                        // craftBlock.canPlace(blockData)
+                        // CraftBlock craftBlock = (CraftBlock) limitedRegion.get
+                        // CraftBlock newCraftBlock = new Craf
+
+                        // net.minecraft.world.level.block.Block block = limitedRegion.getBlockData(x, y, z).
+                    }
+
+                    // TODO change end block transformer to accept blockdata or remove it.
+                    // Final transformation that can be override by other plugins
+                    // if (Underilla.getInstance().hasEndBlockTransformer()) {
+                    // Underilla.getInstance().getEndBlockTransformer().accept(currentBlock);
+                    // }
                 }
             }
         }

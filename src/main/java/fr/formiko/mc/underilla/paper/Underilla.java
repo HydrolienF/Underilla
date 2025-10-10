@@ -109,8 +109,7 @@ public final class Underilla extends JavaPlugin {
             }
             this.getServer().getPluginManager().registerEvents(new WorldListener(), this);
 
-            if (getUnderillaConfig().getBoolean(BooleanKeys.CLEAN_BLOCKS_ENABLED)
-                    || getUnderillaConfig().getBoolean(BooleanKeys.CLEAN_ENTITIES_ENABLED)) {
+            if (getUnderillaConfig().getBoolean(BooleanKeys.CLEAN_ENTITIES_ENABLED)) {
                 info("Cleaning listener for blocks and/or entities have been init.");
                 this.getServer().getPluginManager().registerEvents(new ChunkGeneratedListener(), this);
             }
