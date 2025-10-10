@@ -66,7 +66,7 @@ public class CleanBlocks {
                                     startMaterial);
                             if (toSupport != null) {
                                 limitedRegion.setBlockData(x, y, z, toSupport.createBlockData());
-                                Underilla.info("Block " + x + ", " + y + ", " + z + " was replaced by " + toSupport);
+                                // Underilla.info("Block " + x + ", " + y + ", " + z + " was replaced by " + toSupport);
                             }
                         }
                     }
