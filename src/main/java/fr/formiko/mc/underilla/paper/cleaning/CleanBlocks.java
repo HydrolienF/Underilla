@@ -44,13 +44,12 @@ public class CleanBlocks {
         int maxX = limitedRegion.getCenterBlockX() + limitedRegion.getBuffer() / 2;
         int minZ = limitedRegion.getCenterBlockZ() - limitedRegion.getBuffer() / 2;
         int maxZ = limitedRegion.getCenterBlockZ() + limitedRegion.getBuffer() / 2;
-        Underilla.info("Limited region: " + limitedRegion.getBuffer() + " " + minX + " " + maxX + " " + minZ + " " + maxZ);
 
         for (int x = minX; x < maxX; x++) {
             for (int z = minZ; z < maxZ; z++) {
                 for (int y = minY; y < maxY; y++) {
                     if (!limitedRegion.isInRegion(x, y, z)) {
-                        Underilla.info("Block " + x + ", " + y + ", " + z + " is not in the region " + limitedRegion.getBuffer());
+                        Underilla.warning("Block " + x + ", " + y + ", " + z + " is not in the region " + limitedRegion.getBuffer());
                         continue;
                     }
                     BlockData blockData = limitedRegion.getBlockData(x, y, z);
