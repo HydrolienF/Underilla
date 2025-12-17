@@ -1,3 +1,10 @@
+# 2.2.1
+- Support from 1.21.3 to 1.21.11
+
+# 2.2.0
+- Support & replace blocks before the chunk is generated as part of the BlockPopulator
+- Support from 1.21.3 to 1.21.10
+
 # 2.1.9
 - Support from 1.21.3 to 1.21.9
 
