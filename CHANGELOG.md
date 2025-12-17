@@ -1,3 +1,6 @@
+# 2.2.2
+- Clean tasks are now merged into the main tasks.
+
 # 2.2.1
 - Support from 1.21.3 to 1.21.11
 
