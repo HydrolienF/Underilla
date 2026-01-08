@@ -1,3 +1,6 @@
+# 2.2.3
+- Support from 1.21.3 to 1.21.10. This is the last version to support 1.21.10 and previous version.
+
 # 2.2.2
 - Clean tasks are now merged into the main tasks.
 
