@@ -94,8 +94,7 @@ public class CustomBiomeSource {
             debug("Use surfaceWorldBiome: " + surfaceWorldBiomeName + " at " + x + " " + y + " " + z);
             biomesPlaced.put("surface:" + surfaceWorldBiomeName, biomesPlaced.getOrDefault("surface:" + surfaceWorldBiomeName, 0L) + 1);
             // return surfaceWorldBiome.getBiome();
-            return io.papermc.paper.registry.RegistryAccess.registryAccess().getRegistry(io.papermc.paper.registry.RegistryKey.BIOME)
-                    .get(NamespacedKey.fromString(surfaceWorldBiomeName));
+            return BukkitBiome.getBiomeRegistryAccess().get(NamespacedKey.fromString(surfaceWorldBiomeName));
         }
 
         // If no other biome found, use vanilla biome.

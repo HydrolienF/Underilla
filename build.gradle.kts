@@ -9,10 +9,10 @@ plugins {
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.2.3"
+version = "2.3.0"
 description="Generate vanilla cave in custom world."
-val mainMinecraftVersion = "1.21.10"
-val supportedMinecraftVersions = "1.21.3 - 1.21.10"
+val mainMinecraftVersion = "1.21.11"
+val supportedMinecraftVersions = "1.21.5 - 1.21.11"
 val voidWorldGeneratorVersion = "1.3.2"
 val chunkyVersion = "1.4.28"
 
@@ -30,7 +30,7 @@ repositories {
 dependencies {
     // compileOnly("io.papermc.paper:paper-api:$mainMinecraftVersion-R0.1-SNAPSHOT") // without paperweight
     paperweight.paperDevBundle("$mainMinecraftVersion-R0.1-SNAPSHOT")
-    implementation("fr.formiko.mc.biomeutils:biomeutils:1.1.8")
+    // implementation("fr.formiko.mc.biomeutils:biomeutils:1.1.14") // Not needed since paper added more function to registery as registery.getTagValues().
     implementation("com.github.FormikoLudo:Utils:0.0.9")
     implementation("org.bstats:bstats-bukkit:3.1.0")
     implementation("com.github.HydrolienF:KntNBT:2.2.2")
@@ -56,7 +56,7 @@ tasks {
         sequenceOf(
             "co.aikar",
             "org.bstats",
-            "fr.formiko.mc.biomeutils",
+            // "fr.formiko.mc.biomeutils",
             "fr.formiko.utils",
         ).forEach { pkg ->
             relocate(pkg, "$prefix.$pkg")

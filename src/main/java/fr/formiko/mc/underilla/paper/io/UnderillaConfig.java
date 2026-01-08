@@ -1,8 +1,8 @@
 package fr.formiko.mc.underilla.paper.io;
 
-import fr.formiko.mc.biomeutils.NMSBiomeUtils;
 import fr.formiko.mc.underilla.core.generation.MergeStrategy;
 import fr.formiko.mc.underilla.paper.Underilla;
+import fr.formiko.mc.underilla.paper.impl.BukkitBiome;
 import fr.formiko.mc.underilla.paper.selector.Selector;
 import io.papermc.paper.registry.RegistryAccess;
 import io.papermc.paper.registry.RegistryKey;
@@ -297,7 +297,7 @@ public class UnderillaConfig {
     }
 
     private void initSetBiomeStringMap(FileConfiguration fileConfiguration) {
-        Set<String> allBiomes = NMSBiomeUtils.getAllBiomes().keySet();
+        Collection<String> allBiomes = BukkitBiome.getAllBiomesNames();
         listBiomeStringMap.clear();
         for (SetBiomeStringKeys key : SetBiomeStringKeys.values()) {
             List<String> biomesOrTags = new ArrayList<>();
@@ -307,11 +307,12 @@ public class UnderillaConfig {
                 warnKeyMissing(key);
                 biomesOrTags.addAll(key.defaultValue);
             }
-            biomesOrTags = NMSBiomeUtils.normalizeBiomeNameList(biomesOrTags);
+            biomesOrTags = Tools.normalizeNameList(biomesOrTags);
             Set<String> existingBiomes = new HashSet<>();
             for (String biomeOrTag : biomesOrTags) {
                 if (biomeOrTag.startsWith("#")) {
-                    existingBiomes.addAll(NMSBiomeUtils.getAllBiomesKeyStringMatchingTag(biomeOrTag.substring(1)));
+                    existingBiomes.addAll(BukkitBiome.getAllBiomesOfTag(biomeOrTag.substring(1)).stream()
+                            .map(biome -> biome.getKey().toString()).collect(Collectors.toSet()));
                 } else if (allBiomes.contains(biomeOrTag)) {
                     existingBiomes.add(biomeOrTag);
                 } else {
@@ -364,7 +365,7 @@ public class UnderillaConfig {
 
             Set<Structure> structureSet = allStructures.stream().filter(structure -> regexList.stream().anyMatch(
                     // Not biomes but normalizeBiomeName does exactly what we want.
-                    s -> structureRegistry.getKeyOrThrow(structure).asString().matches(NMSBiomeUtils.normalizeBiomeName(s))))
+                    s -> structureRegistry.getKeyOrThrow(structure).asString().matches(Tools.normalizeName(s))))
                     .collect(Collectors.toSet());
             listStructureMap.put(key, structureSet);
         }

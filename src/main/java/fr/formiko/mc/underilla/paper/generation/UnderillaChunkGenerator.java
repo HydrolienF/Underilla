@@ -6,6 +6,7 @@ import fr.formiko.mc.underilla.core.reader.ChunkReader;
 import fr.formiko.mc.underilla.core.reader.WorldReader;
 import fr.formiko.mc.underilla.paper.Underilla;
 import fr.formiko.mc.underilla.paper.cleaning.CleanBlocks;
+import fr.formiko.mc.underilla.paper.impl.BukkitBiome;
 import fr.formiko.mc.underilla.paper.impl.BukkitChunkData;
 import fr.formiko.mc.underilla.paper.impl.BukkitRegionChunkData;
 import fr.formiko.mc.underilla.paper.impl.BukkitWorldInfo;
@@ -289,10 +290,7 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
         }
 
         @Override
-        public @Nonnull List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
-            return io.papermc.paper.registry.RegistryAccess.registryAccess().getRegistry(io.papermc.paper.registry.RegistryKey.BIOME)
-                    .stream().toList();
-        }
+        public @Nonnull List<Biome> getBiomes(@NotNull WorldInfo worldInfo) { return BukkitBiome.getAllBiomesList(); }
 
     }
 }
