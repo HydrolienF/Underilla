@@ -1,6 +1,7 @@
 {
-	"pack": {
-		"pack_format": 57,
-		"description": "Default Underilla Data Pack"
-	}
+    "pack": {
+        "description": "Default Underilla Data Pack",
+        "min_format": 88,
+        "max_format": 88
+    }
 }
