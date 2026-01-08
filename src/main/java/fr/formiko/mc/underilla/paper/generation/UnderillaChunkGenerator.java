@@ -5,11 +5,13 @@ import fr.formiko.mc.underilla.core.generation.Generator;
 import fr.formiko.mc.underilla.core.reader.ChunkReader;
 import fr.formiko.mc.underilla.core.reader.WorldReader;
 import fr.formiko.mc.underilla.paper.Underilla;
+import fr.formiko.mc.underilla.paper.cleaning.CleanBlocks;
 import fr.formiko.mc.underilla.paper.impl.BukkitChunkData;
 import fr.formiko.mc.underilla.paper.impl.BukkitRegionChunkData;
 import fr.formiko.mc.underilla.paper.impl.BukkitWorldInfo;
 import fr.formiko.mc.underilla.paper.impl.BukkitWorldReader;
 import fr.formiko.mc.underilla.paper.impl.CustomBiomeSource;
+import fr.formiko.mc.underilla.paper.io.UnderillaConfig;
 import fr.formiko.mc.underilla.paper.io.UnderillaConfig.BooleanKeys;
 import fr.formiko.mc.underilla.paper.io.UnderillaConfig.IntegerKeys;
 import fr.formiko.mc.underilla.paper.io.UnderillaConfig.SetBiomeStringKeys;
@@ -258,6 +260,14 @@ public class UnderillaChunkGenerator extends ChunkGenerator {
                             worldInfo.getMaxHeight());
                     this.generator_.reInsertLiquidsOverWorldSurface(this.worldReader_, chunkData);
                 }
+            }
+
+            // The block populators are called after addVanillaDecorations(...) before light and mod spawn.
+            // It's the right time to clean of blocks, but not yet for entities.
+            // Calling it here should be thread safe and lag safe since Chunky will waut that the chunks is generated before stating new
+            // chunks generation.
+            if (Underilla.getUnderillaConfig().getBoolean(UnderillaConfig.BooleanKeys.CLEAN_BLOCKS_ENABLED)) {
+                CleanBlocks.cleanBlocks(worldInfo, chunkX, chunkZ, limitedRegion);
             }
         }
     }
