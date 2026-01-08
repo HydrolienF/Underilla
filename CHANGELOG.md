@@ -1,5 +1,10 @@
+# 2.3.0
+- Support from 1.21.5 to 1.21.11.
+- Underilla now use Paper biome API and won't be compatible with Spigot.
+- Drop BiomeUtils dependency for Paper API to support a larger range of version (without NMS). It fix version 2.2.1 & 2.2.2 not working in 1.21.11.
+
 # 2.2.3
-- Support from 1.21.3 to 1.21.10. This is the last version to support 1.21.10 and previous version.
+- Support from 1.21.3 to 1.21.10. This is the last version to support 1.21.4 and previous version.
 
 # 2.2.2
 - Clean tasks are now merged into the main tasks.
