@@ -1,3 +1,6 @@
+# 2.3.1
+- Make the cave biome heigh be larger for the 3 cave biome & the same for the 3. This should fix deed_dark being much more common than the 2 others one.
+
 # 2.3.0
 - Support from 1.21.5 to 1.21.11.
 - Underilla now use Paper biome API and won't be compatible with Spigot.

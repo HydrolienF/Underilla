@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.3.0"
+version = "2.3.1"
 description="Generate vanilla cave in custom world."
 val mainMinecraftVersion = "1.21.11"
 val supportedMinecraftVersions = "1.21.5 - 1.21.11"
@@ -30,6 +30,7 @@ repositories {
 dependencies {
     // compileOnly("io.papermc.paper:paper-api:$mainMinecraftVersion-R0.1-SNAPSHOT") // without paperweight
     paperweight.paperDevBundle("$mainMinecraftVersion-R0.1-SNAPSHOT")
+    compileOnly("net.kyori:adventure-text-serializer-ansi:4.17.0") // TODO to remove when paper weight latest version will be fixed. It's supposed to be in paperweight.
     // implementation("fr.formiko.mc.biomeutils:biomeutils:1.1.14") // Not needed since paper added more function to registery as registery.getTagValues().
     implementation("com.github.FormikoLudo:Utils:0.0.9")
     implementation("org.bstats:bstats-bukkit:3.1.0")
