@@ -137,19 +137,49 @@ All tests have been done on paper 1.20.4 on a 1000*1000 map generation of the sa
 
 For a 50000 * 30000 world, it would take 40 hours to generate with Minecraft vanilla generator, 113 hours in surface strategie and 279 hours in relative.
 
-## Build & test the plugin
+## Statistics
+[![bStats Graph Data](https://bstats.org/signatures/bukkit/Underilla.svg)](https://bstats.org/plugin/bukkit/Underilla/24393)
+
+# Build, Test & deploy
+
+Feature requests or pull requests are welcome. Concider creating an issue first to talk about your new feature before sending a pull request.
+
+## Build
+
 Clone the [repo](https://github.com/HydrolienF/Underilla) `git clone git@github.com:HydrolienF/Underilla.git`
 
-Create a working jar with `./gradlew assemble`.
+Build with `./gradlew assemble`. The plugin .jar file will be in `build/libs/`.
+
+## Test
+
+You can test the plugin directly in a Minecraft server with `./gradlew runServer`.
+You can also try it on an other server by placing the .jar in `plugins/`.
+You might want to update the plugin config to fit your needs.
 
 Run a local paper server with the example map & datapack on Linux.
 ```sh
 rm run/world_surface/ -fr; cp testMap/world/ run/world_surface/; rm -fr run/world/; mkdir -p run/world/datapacks; cp DatapackExamples/UnderillaBaseDataPack/ run/world/datapacks; ./gradlew runServer
 ```
 
-Build for publication with `./gradlew clean zipStagingDeploy`
+## Deploy
 
-Feature requests or pull requests are welcome. Concider creating an issue first to talk about your new feature before sending a pull request.
+### To Github releases, Hangar & Modrinth
+
+Push tag to git to trigger a github action release that will create a new Github release and publish to Hangar & Modrinth.
+```sh
+git tag 1.2.3
+git push --tags
+```
+
+### To Maven central
+
+*Require ossrhUsername & ossrhPassword in ~/.gradle/gradle.properties*
+
+```sh
+./gradlew clean publish
+./gradlew jreleaserDeploy
+```
+The published lib will be available [on maven central](https://central.sonatype.com/artifact/fr.formiko.mc.underilla/underilla).
 
 ## Thanks
 
