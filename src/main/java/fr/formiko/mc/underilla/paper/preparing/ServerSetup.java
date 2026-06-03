@@ -56,7 +56,7 @@ public class ServerSetup {
                 shouldDownloadVoidWorldGenerator, shouldDownloadChunky));
 
         if (shouldDownloadVoidWorldGenerator) {
-            String voidWorldGeneratorVersion = Underilla.getInstance().getConfig().getString("voidWorldGeneratorVersion", "1.3.2");
+            String voidWorldGeneratorVersion = Underilla.getInstance().getConfig().getString("voidWorldGeneratorVersion", "1.3.12");
             error = !FLUFiles.download(
                     String.format("https://github.com/HydrolienF/VoidWorldGenerator/releases/download/%s/VoidWorldGenerator-%s.jar",
                             voidWorldGeneratorVersion, voidWorldGeneratorVersion),
@@ -64,7 +64,7 @@ public class ServerSetup {
             Underilla.info("Downloaded VoidWorldGenerator " + (error ? "with" : "without") + " errors");
         }
         if (shouldDownloadChunky) {
-            String chunkyVersion = Underilla.getInstance().getConfig().getString("chunkyVersion", "1.4.28");
+            String chunkyVersion = Underilla.getInstance().getConfig().getString("chunkyVersion", "1.4.55");
             error = !FLUFiles
                     .download(
                             String.format("https://hangarcdn.papermc.io/plugins/pop4959/Chunky/versions/%s/PAPER/Chunky-Bukkit-%s.jar",

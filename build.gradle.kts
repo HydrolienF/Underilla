@@ -1,20 +1,23 @@
 plugins {
     `java-library`
-    id("io.github.goooler.shadow") version "8.1.8"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17" // paperweight // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
-    `maven-publish` // Add ./gradlew publishToMavenLocal
-    id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("io.papermc.hangar-publish-plugin") version "0.1.3"
-    id("org.sonarqube") version "5.0.0.4638"
+    id("com.gradleup.shadow") version "9.4.1"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21" // paperweight // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
+    id("maven-publish")
+    id("signing") // Add ./gradlew signArchives
+    id("xyz.jpenilla.run-paper") version "3.0.2" // Paper server for testing/hotloading JVM
+    id("org.sonarqube") version "7.3.0.8198" // Advanced code quality checks
+    id("io.papermc.hangar-publish-plugin") version "0.1.4"
+    id("com.modrinth.minotaur") version "2.+" // cf https://github.com/modrinth/minotaur
+    id("org.jreleaser") version "1.24.0"
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.3.1"
+version = "2.3.2"
 description="Generate vanilla cave in custom world."
 val mainMinecraftVersion = "1.21.11"
 val supportedMinecraftVersions = "1.21.5 - 1.21.11"
-val voidWorldGeneratorVersion = "1.3.2"
-val chunkyVersion = "1.4.28"
+val voidWorldGeneratorVersion = "1.3.12"
+val chunkyVersion = "1.4.55"
 
 repositories {
     mavenLocal()
@@ -80,7 +83,7 @@ tasks {
             "name" to project.name,
             "version" to project.version,
             "description" to project.description,
-            "apiVersion" to "1.21.3",
+            "apiVersion" to "1.21.5",
             "group" to project.group,
             "voidWorldGeneratorVersion" to voidWorldGeneratorVersion,
             "chunkyVersion" to chunkyVersion
@@ -227,6 +230,7 @@ publishing {
 
       artifactId = project.name.lowercase()
       pom {
+        name.set(project.name.lowercase())
         packaging = "jar"
         url.set("https://github.com/HydrolienF/${project.name}")
         inceptionYear.set("2024")
@@ -254,35 +258,48 @@ publishing {
   }
   repositories {
     maven {
-        url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+        // url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+        name = "PreDeploy"
+        url = uri(layout.buildDirectory.dir("pre-deploy"))
 
     }
   }
 }
 
-// Custom signing task using gpg -ab
-val signWithGpg = tasks.register("signWithGpg") {
-    dependsOn("publishMavenJavaPublicationToMavenRepository")
-    group = "signing"
-    description = "Sign the publication using gpg -ab"
-    val filesToSign = fileTree("${buildDir}/staging-deploy/${project.group.toString().lowercase().replace('.', '/')}/${project.name.lowercase()}/${project.version}") {
-        include("**/*.jar", "**/*.module", "**/*.pom")
+jreleaser {
+    project {
+        name.set("${project.name}")
+        copyright.set("Hydrolien")
+        description.set(findProperty("description")?.toString() ?: "Default description")
+        website.set("https://github.com/HydrolienF/${project.name}")
     }
-    doFirst {
-        filesToSign.forEach { file ->
-            val command = listOf("gpg", "-ab", "--output", "${file.absolutePath}.asc", file.absolutePath)
-            println("Executing command: ${command.joinToString(" ")}")
-            exec {
-                commandLine = command
+
+    deploy {
+        maven {
+            mavenCentral {
+                create("sonatype") {
+                    active.set(org.jreleaser.model.Active.ALWAYS)
+                    url.set("https://central.sonatype.com/api/v1/publisher")
+                    username.set(findProperty("ossrhUsername")?.toString()
+                        ?: System.getenv("OSSRH_USERNAME"))
+                    password.set(findProperty("ossrhPassword")?.toString()
+                        ?: System.getenv("OSSRH_PASSWORD"))
+                    stagingRepository("build/pre-deploy")  // call as function
+
+                    applyMavenCentralRules = false
+                }
             }
+        }
+    }
+
+    release {
+        github {
+            enabled.set(false)
         }
     }
 }
 
-tasks.register<Zip>("zipStagingDeploy") {
-    dependsOn("signWithGpg")
-    dependsOn("publishMavenJavaPublicationToMavenRepository")
-    from(layout.buildDirectory.dir("staging-deploy"))
-    archiveFileName.set("staging-deploy-${project.name}-${project.version}.zip")
-    destinationDirectory.set(layout.buildDirectory)
+signing {
+    useGpgCmd() // uses local gpg executable
+    sign(publishing.publications["mavenJava"])
 }
