@@ -215,12 +215,11 @@ hangarPublish { // ./gradlew publishPluginPublicationToHangar
 }
 
 sonar {
-    properties {
-        property("sonar.organization", "mvndicraft")
-        property("sonar.projectKey", project.name)
-        //property("sonar.host.url", "https://sonarcloud.io/")
-        property("sonar.host.url", "http://mvndi.formiko.fr:9000/")
-    }
+  properties {
+    property("sonar.projectKey", project.name)
+    property("sonar.projectName", project.name)
+    property("sonar.host.url", "https://mvndisonar.formiko.fr")
+  }
 }
 
 publishing {
