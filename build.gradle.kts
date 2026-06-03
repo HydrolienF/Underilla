@@ -1,5 +1,5 @@
 plugins {
-    `java-library`
+    id("java")
     id("com.gradleup.shadow") version "9.4.1"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.21" // paperweight // Check for new versions at https://plugins.gradle.org/plugin/io.papermc.paperweight.userdev
     id("maven-publish")
@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "fr.formiko.mc.underilla"
-version = "2.3.2"
+version = "2.3.3"
 description="Generate vanilla cave in custom world."
 val mainMinecraftVersion = "1.21.11"
 val supportedMinecraftVersions = "1.21.5 - 1.21.11"
@@ -103,12 +103,6 @@ tasks {
         //     hangar("Chunky", "$chunkyVersion")
         //     github("HydrolienF", "VoidWorldGenerator", "$voidWorldGeneratorVersion", "VoidWorldGenerator-${voidWorldGeneratorVersion}.jar")
         // }
-    }
-}
-
-publishing {
-    publications.create<MavenPublication>("maven") {
-        from(components["java"])
     }
 }
 
